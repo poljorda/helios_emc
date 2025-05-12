@@ -6,6 +6,8 @@ import time
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk # type: ignore
 from matplotlib.figure import Figure
+from matplotlib.axes import Axes # Added
+from matplotlib.lines import Line2D # Added
 import matplotlib.dates as mdates
 from datetime import datetime
 import queue
@@ -18,7 +20,7 @@ import os
 import sys # Optional: for error handling during DBC/CAN init
 
 # Type hinting imports
-from typing import Optional, Tuple, Callable, Any, Dict
+from typing import Optional, Tuple, Callable, Any, Dict, List # Added List
 
 # Import the sensor buffer implementation
 from sensor_data_structure import ModularSensorBuffer
@@ -114,7 +116,7 @@ class CanReaderThread(threading.Thread):
         Returns (data_type_str, module_idx, cell_idx) or None.
         'data_type_str' will be "voltage" or "temperature".
         """
-        match = re.match(r"(U|T)CellBatt(?:Pwr|Egy)Hi_(\d+)_(\d+)", signal_name)
+        match = re.match(r"(U|T)CellBattEgyHi_(\d+)_(\d+)", signal_name)
         if match:
             data_type_char, module_str, cell_str = match.groups()
             data_type_map: Dict[str, str] = {"U": "voltage", "T": "temperature"}
@@ -172,7 +174,7 @@ class CanReaderThread(threading.Thread):
                     except KeyError: # Message ID not in DBC
                         # print(f"Message ID {hex(msg.arbitration_id)} not in DBC.") # Can be noisy
                         pass
-                    except cantools.db.DecodeError as decode_error: # More specific decode error
+                    except cantools.db.DecodeError as decode_error: # type: ignore[attr-defined]
                         print(f"Decode Error for ID {hex(msg.arbitration_id)}: {decode_error}")
                     except ValueError as val_err: # Catch potential errors from bytes(msg.data) or float conversion
                         print(f"ValueError processing msg ID {hex(msg.arbitration_id)}: {val_err}")
@@ -205,7 +207,37 @@ class SensorPlotTab:
     Tkinter notebook tab with matplotlib plots for sensor data visualization.
     Shows voltage and temperature data for a specific module in separate subplots.
     """
-    def __init__(self, notebook, sensor_buffer, module_id=1):
+    # Type hints for instance variables
+    sensor_buffer: ModularSensorBuffer
+    module_id: int
+    notebook: ttk.Notebook
+    last_update_time: float
+    tab: ttk.Frame
+    controls_frame: ttk.Frame
+    module_var: tk.StringVar
+    module_selector: ttk.Combobox
+    auto_update_var: tk.BooleanVar
+    auto_update_checkbox: ttk.Checkbutton
+    update_interval_var: tk.StringVar
+    interval_selector: ttk.Combobox
+    update_button: ttk.Button
+    fig: Figure
+    voltage_ax: Axes
+    temp_ax: Axes
+    voltage_lines: List[Line2D]
+    temp_lines: List[Line2D]
+    canvas_frame: ttk.Frame
+    canvas: FigureCanvasTkAgg
+    toolbar_frame: ttk.Frame
+    toolbar: NavigationToolbar2Tk
+    status_frame: ttk.Frame
+    status_var: tk.StringVar
+    status_label: ttk.Label
+    update_queue: "queue.Queue[bool]" # Forward reference for queue.Queue
+    running: bool
+    update_thread: threading.Thread
+
+    def __init__(self, notebook: ttk.Notebook, sensor_buffer: ModularSensorBuffer, module_id: int = 1) -> None:
         self.sensor_buffer = sensor_buffer
         self.module_id = module_id
         self.notebook = notebook  # Store reference to notebook for active tab checking
@@ -322,20 +354,20 @@ class SensorPlotTab:
         # Initially update the plots
         self.tab.after(100, self.check_update_queue)
     
-    def initialize_plot_lines(self):
+    def initialize_plot_lines(self) -> None:
         """Initialize the plot lines for voltage and temperature"""
         # Clear any existing lines
         self.voltage_lines = []
         self.temp_lines = []
         
         # Initialize empty lines for voltage
-        voltage_colors = plt.cm.tab20(np.linspace(0, 1, 16))
+        voltage_colors = plt.cm.tab20(np.linspace(0, 1, 16)) # type: ignore[attr-defined]
         for cell_id in range(16):
             line, = self.voltage_ax.plot([], [], label=f"Cell {cell_id}", color=voltage_colors[cell_id])
             self.voltage_lines.append(line)
         
         # Initialize empty lines for temperature
-        temp_colors = plt.cm.tab10(np.linspace(0, 1, 6))
+        temp_colors = plt.cm.tab10(np.linspace(0, 1, 6)) # type: ignore[attr-defined]
         for cell_id in range(6):
             line, = self.temp_ax.plot([], [], label=f"Cell {cell_id}", color=temp_colors[cell_id])
             self.temp_lines.append(line)
@@ -344,9 +376,9 @@ class SensorPlotTab:
         self.voltage_ax.legend(loc='upper right', ncol=4, fontsize='small')
         self.temp_ax.legend(loc='upper right', ncol=3, fontsize='small')
     
-    def update_plots(self):
+    def update_plots(self) -> None:
         """Update the plots with the latest data"""
-        module_id = int(self.module_var.get())
+        module_id: int = int(self.module_var.get())
         
         # Update voltage plot
         for cell_id in range(16):
@@ -354,8 +386,8 @@ class SensorPlotTab:
             if timestamps is not None and len(timestamps) > 0:
                 # Convert timestamps to datetime objects for better x-axis display
                 # Convert numpy.float32 to standard Python float for datetime compatibility
-                datetime_timestamps = [datetime.fromtimestamp(float(ts)/1000.0) for ts in timestamps]
-                self.voltage_lines[cell_id].set_data(datetime_timestamps, values)
+                datetime_timestamps_voltages: List[datetime] = [datetime.fromtimestamp(float(ts)/1000.0) for ts in timestamps]
+                self.voltage_lines[cell_id].set_data(datetime_timestamps_voltages, values) # type: ignore[arg-type]
         
         # Update temperature plot
         for cell_id in range(6):
@@ -363,29 +395,29 @@ class SensorPlotTab:
             if timestamps is not None and len(timestamps) > 0:
                 # Convert timestamps to datetime objects
                 # Convert numpy.float32 to standard Python float for datetime compatibility
-                datetime_timestamps = [datetime.fromtimestamp(float(ts)/1000.0) for ts in timestamps]
-                self.temp_lines[cell_id].set_data(datetime_timestamps, values)
+                datetime_timestamps_temps: List[datetime] = [datetime.fromtimestamp(float(ts)/1000.0) for ts in timestamps]
+                self.temp_lines[cell_id].set_data(datetime_timestamps_temps, values) # type: ignore[arg-type]
         
         # Adjust x-axis limits for voltage plot
-        if any(len(line.get_xdata()) > 0 for line in self.voltage_lines):
-            all_timestamps = []
+        if any(len(line.get_xdata()) > 0 for line in self.voltage_lines): # type: ignore[arg-type]
+            all_timestamps: List[datetime] = []
             for line in self.voltage_lines:
-                if len(line.get_xdata()) > 0:
-                    all_timestamps.extend(line.get_xdata())
+                if len(line.get_xdata()) > 0: # type: ignore[arg-type]
+                    all_timestamps.extend(line.get_xdata()) # type: ignore[arg-type]
             if all_timestamps:
-                self.voltage_ax.set_xlim(min(all_timestamps), max(all_timestamps))
+                self.voltage_ax.set_xlim(min(all_timestamps), max(all_timestamps)) # type: ignore[arg-type]
                 self.voltage_ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S'))
                 # Only show x-labels on bottom plot
                 self.voltage_ax.tick_params(labelbottom=False)
         
         # Adjust x-axis limits for temperature plot
-        if any(len(line.get_xdata()) > 0 for line in self.temp_lines):
-            all_timestamps = []
+        if any(len(line.get_xdata()) > 0 for line in self.temp_lines): # type: ignore[arg-type]
+            all_timestamps_temps: List[datetime] = []
             for line in self.temp_lines:
-                if len(line.get_xdata()) > 0:
-                    all_timestamps.extend(line.get_xdata())
-            if all_timestamps:
-                self.temp_ax.set_xlim(min(all_timestamps), max(all_timestamps))
+                if len(line.get_xdata()) > 0: # type: ignore[arg-type]
+                    all_timestamps_temps.extend(line.get_xdata()) # type: ignore[arg-type]
+            if all_timestamps_temps:
+                self.temp_ax.set_xlim(min(all_timestamps_temps), max(all_timestamps_temps)) # type: ignore[arg-type]
                 self.temp_ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S'))
                 self.fig.autofmt_xdate(rotation=45)
         
@@ -395,9 +427,9 @@ class SensorPlotTab:
         # Update status
         self.status_var.set(f"Updated: {datetime.now().strftime('%H:%M:%S')}")
     
-    def on_module_change(self, event):
+    def on_module_change(self, event: Any) -> None: # tk.Event can also be used if preferred
         """Handle module selection change"""
-        module_id = int(self.module_var.get())
+        module_id: int = int(self.module_var.get())
         self.module_id = module_id
         
         # Update subplot titles
@@ -407,21 +439,21 @@ class SensorPlotTab:
         # Update the plots
         self.update_plots()
     
-    def toggle_auto_update(self):
+    def toggle_auto_update(self) -> None:
         """Toggle auto-update on/off"""
         if self.auto_update_var.get():
             self.update_button.config(state=tk.DISABLED)
         else:
             self.update_button.config(state=tk.NORMAL)
     
-    def update_thread_func(self):
+    def update_thread_func(self) -> None:
         """Thread function to monitor for data updates"""
         while self.running:
             # Wait for data from the sensor buffer
-            new_data = self.sensor_buffer.wait_for_data(timeout=0.5)
+            new_data: bool = self.sensor_buffer.wait_for_data(timeout=0.5)
             
-            current_time = time.time()
-            update_interval = float(self.update_interval_var.get())
+            current_time: float = time.time()
+            update_interval: float = float(self.update_interval_var.get())
             
             # Check if:
             # 1. Auto-update is enabled
@@ -439,16 +471,19 @@ class SensorPlotTab:
                 
             time.sleep(0.1)
     
-    def is_tab_active(self):
+    def is_tab_active(self) -> Any:
         """Check if this tab is currently visible/selected in the notebook"""
-        return self.notebook.index(self.notebook.select()) == self.notebook.index(self.tab)
+        try: # Add try-except in case the tab is not found (e.g. during shutdown)
+            return self.notebook.index(self.notebook.select()) == self.notebook.index(self.tab)
+        except tk.TclError:
+            return False # Tab might have been destroyed or notebook is in an inconsistent state
     
-    def on_interval_change(self, event):
+    def on_interval_change(self, event: Any) -> None: # tk.Event can also be used
         """Handle update interval change"""
         # Reset the last update time to force an immediate update with the new interval
         self.last_update_time = 0
     
-    def check_update_queue(self):
+    def check_update_queue(self) -> None:
         """Check if there are update requests in the queue"""
         try:
             while True:
@@ -463,7 +498,7 @@ class SensorPlotTab:
         # Schedule the next check
         self.tab.after(100, self.check_update_queue)
     
-    def stop(self):
+    def stop(self) -> None:
         """Stop the update thread"""
         self.running = False
         if self.update_thread.is_alive():
@@ -472,7 +507,17 @@ class SensorPlotTab:
 
 class SensorMonitorApp:
     """Main application window with notebook interface"""
-    def __init__(self, root):
+    # Type hints for instance variables
+    root: tk.Tk
+    sensor_buffer: ModularSensorBuffer
+    status_var: tk.StringVar
+    can_reader: CanReaderThread
+    notebook: ttk.Notebook
+    plot_tab: SensorPlotTab # Assuming SensorPlotTab is defined above
+    button_frame: ttk.Frame
+    close_button: ttk.Button
+
+    def __init__(self, root: tk.Tk) -> None:
         self.root = root
         self.root.title("Battery Sensor Monitor")
         self.root.geometry("1200x800")
@@ -515,13 +560,13 @@ class SensorMonitorApp:
         # Bind close event
         self.root.protocol("WM_DELETE_WINDOW", self.on_close)
     
-    def update_status_bar(self, message: str, is_error: bool = False):
+    def update_status_bar(self, message: str, is_error: bool = False) -> None:
          """Thread-safe method to update the status bar."""
          # Use `after` to ensure GUI updates happen in the main thread
          self.root.after(0, lambda: self.status_var.set(message))
          # You could also change label colors here based on is_error
 
-    def on_close(self):
+    def on_close(self) -> None:
         """Handle application close."""
         print("Closing application...")
         # Stop the plot tab updates first (if it has its own thread/timers)
