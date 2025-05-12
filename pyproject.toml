@@ -1,4 +1,4 @@
 [tool.mypy]
-files = ["main.py"]
+exlude = ["."]
 strict = true
 disallow_untyped_calls = false

@@ -1,0 +1,4 @@
+numpy>=2.2.5
+matplotlib>=3.10.3
+python-can>=4.5.0
+cantools>=40.2.1
