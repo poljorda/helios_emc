@@ -1,0 +1,4 @@
+[tool.mypy]
+files = ["main.py"]
+strict = true
+disallow_untyped_calls = false
