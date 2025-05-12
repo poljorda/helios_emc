@@ -60,7 +60,9 @@ class CanReaderThread(threading.Thread):
             # If status_callback needs to interact with Tkinter GUI from this thread,
             # it should use root.after() or a thread-safe queue.
             # For simplicity, we assume the callback itself handles thread safety if needed.
-            self.status_callback(message, is_error)
+            if self.running:
+                # Only update status if the thread is running
+                self.status_callback(message, is_error)
 
     def _load_dbc(self) -> bool:
         """Loads the DBC file."""
@@ -274,7 +276,8 @@ class SensorPlotTab:
 
         # Configure the tab layout
         self.tab.columnconfigure(0, weight=1)
-        self.tab.rowconfigure(0, weight=1)
+        # Adjust row weights: controls (0), canvas (1, weight=1), toolbar (2), status (3)
+        self.tab.rowconfigure(1, weight=1) # Give plot canvas more weight
 
         # Create frame for module selection
         self.controls_frame = ttk.Frame(self.tab)
@@ -320,8 +323,8 @@ class SensorPlotTab:
         self.update_button.pack(side=tk.LEFT, padx=10)
 
         # Create matplotlib figure with two subplots
-        self.fig = Figure(figsize=(10, 8), dpi=100)
-        self.fig.subplots_adjust(hspace=0.3)
+        self.fig = Figure(figsize=(10, 6), dpi=100, tight_layout=True)  # Reduced height from 8 to 6
+        # self.fig.subplots_adjust(hspace=0.4) # Adjusted hspace if needed
 
         # Create voltage subplot
         self.voltage_ax = self.fig.add_subplot(2, 1, 1)
@@ -540,26 +543,32 @@ class SensorMonitorApp:
     plot_tab: SensorPlotTab  # Assuming SensorPlotTab is defined above
     button_frame: ttk.Frame
     close_button: ttk.Button
+    status_frame: ttk.Frame # Added for CAN status
+    status_label: ttk.Label # Added for CAN status
 
     def __init__(self, root: tk.Tk) -> None:
         self.root = root
         self.root.title("Battery Sensor Monitor")
-        self.root.geometry("1200x800")
+        self.root.state("zoomed")  # Set a default size for the window
+        self.root.minsize(1200, 700)  # Adjusted minsize if needed
 
         # Configure the root window
         self.root.columnconfigure(0, weight=1)
-        self.root.rowconfigure(0, weight=1)
+        self.root.rowconfigure(0, weight=1) # Notebook row
+        self.root.rowconfigure(1, weight=0) # Button frame row
+        self.root.rowconfigure(2, weight=0) # CAN Status bar row
 
         # Create sensor data buffer (already configured for 5 modules)
         # Buffer size might need adjustment based on expected data rate / desired history
         self.sensor_buffer = ModularSensorBuffer(buffer_size=600)  # Increased buffer size example
 
-        # # --- Status Bar (Added for CAN status) ---
-        # self.status_frame = ttk.Frame(self.root)
-        # self.status_frame.grid(row=2, column=0, sticky="ew", padx=10, pady=(5, 0)) # Place below notebook/buttons
+        # --- Status Bar (Added for CAN status) ---
+        self.status_frame = ttk.Frame(self.root)
+        # Grid position changed to be at the bottom
+        self.status_frame.grid(row=2, column=0, sticky="ew", padx=10, pady=(5, 5))
         self.status_var = tk.StringVar(value="Initializing...")
-        # self.status_label = ttk.Label(self.status_frame, textvariable=self.status_var, anchor=tk.W, relief=tk.SUNKEN, padding=2)
-        # self.status_label.pack(fill=tk.X, expand=True)
+        self.status_label = ttk.Label(self.status_frame, textvariable=self.status_var, anchor=tk.W, relief=tk.SUNKEN, padding=2)
+        self.status_label.pack(fill=tk.X, expand=True)
 
         # Create and start the CAN reader thread
         # Pass a callback to update the status bar (optional, needs careful implementation)
@@ -576,8 +585,8 @@ class SensorMonitorApp:
 
         # Add Close button
         self.button_frame = ttk.Frame(self.root)
-        # TODO: Adjust grid row to accommodate status bar
-        self.button_frame.grid(row=1, column=0, sticky="e", padx=10, pady=10)
+        # Grid row changed to be above the CAN status bar
+        self.button_frame.grid(row=1, column=0, sticky="e", padx=10, pady=(5,0))
         self.close_button = ttk.Button(self.button_frame, text="Close", command=self.on_close)
         self.close_button.pack(side=tk.RIGHT)
 
