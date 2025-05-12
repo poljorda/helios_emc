@@ -246,6 +246,7 @@ class SensorPlotTab:
     update_interval_var: tk.StringVar
     interval_selector: ttk.Combobox
     update_button: ttk.Button
+    clear_data_button: ttk.Button  # Added
     fig: Figure
     voltage_ax: Axes
     temp_ax: Axes
@@ -277,7 +278,7 @@ class SensorPlotTab:
         # Configure the tab layout
         self.tab.columnconfigure(0, weight=1)
         # Adjust row weights: controls (0), canvas (1, weight=1), toolbar (2), status (3)
-        self.tab.rowconfigure(1, weight=1) # Give plot canvas more weight
+        self.tab.rowconfigure(1, weight=1)  # Give plot canvas more weight
 
         # Create frame for module selection
         self.controls_frame = ttk.Frame(self.tab)
@@ -321,6 +322,12 @@ class SensorPlotTab:
             self.controls_frame, text="Update Now", command=self.update_plots, state=tk.DISABLED
         )
         self.update_button.pack(side=tk.LEFT, padx=10)
+
+        # Clear Data button
+        self.clear_data_button = ttk.Button(
+            self.controls_frame, text="Clear Data", command=self.on_clear_data
+        )
+        self.clear_data_button.pack(side=tk.RIGHT, padx=0)
 
         # Create matplotlib figure with two subplots
         self.fig = Figure(figsize=(10, 6), dpi=100, tight_layout=True)  # Reduced height from 8 to 6
@@ -410,6 +417,8 @@ class SensorPlotTab:
                     datetime.fromtimestamp(float(ts) / 1000.0) for ts in timestamps
                 ]
                 self.voltage_lines[cell_id].set_data(datetime_timestamps_voltages, values)  # type: ignore[arg-type]
+            else:  # Ensure lines are cleared if no data
+                self.voltage_lines[cell_id].set_data([], [])
 
         # Update temperature plot
         for cell_id in range(6):
@@ -421,29 +430,38 @@ class SensorPlotTab:
                     datetime.fromtimestamp(float(ts) / 1000.0) for ts in timestamps
                 ]
                 self.temp_lines[cell_id].set_data(datetime_timestamps_temps, values)  # type: ignore[arg-type]
+            else:  # Ensure lines are cleared if no data
+                self.temp_lines[cell_id].set_data([], [])
 
         # Adjust x-axis limits for voltage plot
-        if any(len(line.get_xdata()) > 0 for line in self.voltage_lines):  # type: ignore[arg-type]
-            all_timestamps: List[datetime] = []
-            for line in self.voltage_lines:
-                if len(line.get_xdata()) > 0:  # type: ignore[arg-type]
-                    all_timestamps.extend(line.get_xdata())  # type: ignore[arg-type]
-            if all_timestamps:
-                self.voltage_ax.set_xlim(min(all_timestamps), max(all_timestamps))  # type: ignore[arg-type]
-                self.voltage_ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M:%S"))
-                # Only show x-labels on bottom plot
-                self.voltage_ax.tick_params(labelbottom=False)
+        all_timestamps_volt: List[datetime] = []
+        for line in self.voltage_lines:
+            if len(line.get_xdata()) > 0:  # type: ignore[arg-type]
+                all_timestamps_volt.extend(line.get_xdata())  # type: ignore[arg-type]
+
+        if all_timestamps_volt:
+            self.voltage_ax.set_xlim(min(all_timestamps_volt), max(all_timestamps_volt))  # type: ignore[arg-type]
+            self.voltage_ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M:%S"))
+            self.voltage_ax.tick_params(labelbottom=False)
+        else:  # Reset limits if no data
+            self.voltage_ax.set_xlim(datetime.now(), datetime.now())  # Default empty view
+            self.voltage_ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M:%S"))
+            self.voltage_ax.tick_params(labelbottom=False)
 
         # Adjust x-axis limits for temperature plot
-        if any(len(line.get_xdata()) > 0 for line in self.temp_lines):  # type: ignore[arg-type]
-            all_timestamps_temps: List[datetime] = []
-            for line in self.temp_lines:
-                if len(line.get_xdata()) > 0:  # type: ignore[arg-type]
-                    all_timestamps_temps.extend(line.get_xdata())  # type: ignore[arg-type]
-            if all_timestamps_temps:
-                self.temp_ax.set_xlim(min(all_timestamps_temps), max(all_timestamps_temps))  # type: ignore[arg-type]
-                self.temp_ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M:%S"))
-                self.fig.autofmt_xdate(rotation=45)
+        all_timestamps_temp: List[datetime] = []
+        for line in self.temp_lines:
+            if len(line.get_xdata()) > 0:  # type: ignore[arg-type]
+                all_timestamps_temp.extend(line.get_xdata())  # type: ignore[arg-type]
+
+        if all_timestamps_temp:
+            self.temp_ax.set_xlim(min(all_timestamps_temp), max(all_timestamps_temp))  # type: ignore[arg-type]
+            self.temp_ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M:%S"))
+            self.fig.autofmt_xdate(rotation=45)
+        else:  # Reset limits if no data
+            self.temp_ax.set_xlim(datetime.now(), datetime.now())  # Default empty view
+            self.temp_ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M:%S"))
+            self.fig.autofmt_xdate(rotation=45)
 
         # Update the canvas
         self.canvas.draw_idle()
@@ -467,8 +485,31 @@ class SensorPlotTab:
         """Toggle auto-update on/off"""
         if self.auto_update_var.get():
             self.update_button.config(state=tk.DISABLED)
+            # Consider if clear_data_button state should also change
         else:
             self.update_button.config(state=tk.NORMAL)
+
+    def on_clear_data(self) -> None:
+        """Clear all data from the buffer and update plots."""
+        # Assuming ModularSensorBuffer has a method to clear all data.
+        # If not, this part needs to be implemented in ModularSensorBuffer.
+        if hasattr(self.sensor_buffer, "clear_all_data"):
+            self.sensor_buffer.clear_all_data()
+            print("Sensor data cleared.")
+        else:
+            print("Warning: ModularSensorBuffer does not have a 'clear_all_data' method.")
+            # As a fallback, you might try to re-initialize the buffer or clear known structures
+            # For now, we'll just clear the plot lines.
+
+        # Clear data from plot lines
+        for line in self.voltage_lines:
+            line.set_data([], [])
+        for line in self.temp_lines:
+            line.set_data([], [])
+
+        # Update plots to reflect cleared data
+        self.update_plots()
+        self.status_var.set(f"Data cleared: {datetime.now().strftime('%H:%M:%S')}")
 
     def update_thread_func(self) -> None:
         """Thread function to monitor for data updates"""
@@ -543,20 +584,20 @@ class SensorMonitorApp:
     plot_tab: SensorPlotTab  # Assuming SensorPlotTab is defined above
     button_frame: ttk.Frame
     close_button: ttk.Button
-    status_frame: ttk.Frame # Added for CAN status
-    status_label: ttk.Label # Added for CAN status
+    status_frame: ttk.Frame  # Added for CAN status
+    status_label: ttk.Label  # Added for CAN status
 
     def __init__(self, root: tk.Tk) -> None:
         self.root = root
-        self.root.title("Battery Sensor Monitor")
+        self.root.title("HELIOS BMS Monitor")
         self.root.state("zoomed")  # Set a default size for the window
         self.root.minsize(1200, 700)  # Adjusted minsize if needed
 
         # Configure the root window
         self.root.columnconfigure(0, weight=1)
-        self.root.rowconfigure(0, weight=1) # Notebook row
-        self.root.rowconfigure(1, weight=0) # Button frame row
-        self.root.rowconfigure(2, weight=0) # CAN Status bar row
+        self.root.rowconfigure(0, weight=1)  # Notebook row
+        self.root.rowconfigure(1, weight=0)  # Button frame row
+        self.root.rowconfigure(2, weight=0)  # CAN Status bar row
 
         # Create sensor data buffer (already configured for 5 modules)
         # Buffer size might need adjustment based on expected data rate / desired history
@@ -586,7 +627,7 @@ class SensorMonitorApp:
         # Add Close button
         self.button_frame = ttk.Frame(self.root)
         # Grid row changed to be above the CAN status bar
-        self.button_frame.grid(row=1, column=0, sticky="e", padx=10, pady=(5,0))
+        self.button_frame.grid(row=1, column=0, sticky="e", padx=10, pady=(5, 0))
         self.close_button = ttk.Button(self.button_frame, text="Close", command=self.on_close)
         self.close_button.pack(side=tk.RIGHT)
 

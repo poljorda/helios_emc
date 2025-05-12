@@ -74,6 +74,25 @@ class ModularSensorBuffer:
         # Flag to indicate if data is ready for plotting
         self.data_ready = threading.Event()
 
+    def clear_all_data(self) -> None:
+        """Clears all stored sensor data, indices, and flags."""
+        with self.voltage_lock, self.temp_lock:
+            # Reset voltage data structures
+            self.voltage_data.fill(0)
+            self.voltage_indices.fill(0)
+            self.voltage_full.fill(False)
+            self.last_voltage_update = 0
+
+            # Reset temperature data structures
+            self.temp_data.fill(0)
+            self.temp_indices.fill(0)
+            self.temp_full.fill(False)
+            self.last_temp_update = 0
+
+            # Clear the data ready event
+            self.data_ready.clear()
+            print("ModularSensorBuffer: All data cleared.")
+
     def update_voltage(self, module_id: int, cell_id: int, timestamp: float, value: float) -> bool:
         """Thread-safe update of voltage sensor data"""
         if not (0 <= module_id < self.num_voltage_modules and 0 <= cell_id < self.num_voltage_cells):
