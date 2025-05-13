@@ -25,12 +25,15 @@ from typing import Optional, Tuple, Callable, Any, Dict, List  # Added List
 # Import the sensor buffer implementation
 from sensor_data_structure import ModularSensorBuffer
 
+# Import vehicle CAN Communication library
+from vehicle_can_communication import VehicleCanCommsThread, SharedValue
+
 # --- Constants (Adapt from can_monitor_app.py and can_simulator.py) ---
 DBC_FILE_PATH = r"resources\IOT_CAN_v4.0.dbc"  # Make sure this path is correct
 KVASER_INTERFACE = "kvaser"
 # Use channel 0 for virtual simulation, maybe 1 for real hardware? Make configurable?
 KVASER_CHANNEL = 1  # For testing with can_simulator.py which uses channel 0
-IS_VIRTUAL = True  # Set True for testing with simulator
+IS_VIRTUAL = False  # Set True for testing with simulator
 
 # CAN FD Bit Timing (Must match monitor and simulator)
 ARBITRATION_BITRATE = 1000000
@@ -580,12 +583,19 @@ class SensorMonitorApp:
     sensor_buffer: ModularSensorBuffer
     status_var: tk.StringVar
     can_reader: CanReaderThread
+    # Add vehicle_can_comm to type hints
+    vehicle_can_comm: VehicleCanCommsThread 
     notebook: ttk.Notebook
     plot_tab: SensorPlotTab  # Assuming SensorPlotTab is defined above
     button_frame: ttk.Frame
     close_button: ttk.Button
     status_frame: ttk.Frame  # Added for CAN status
     status_label: ttk.Label  # Added for CAN status
+    # Add acquisition control frame and buttons to type hints
+    acquisition_controls_frame: ttk.Frame
+    # Replace start/stop buttons with a single toggle button
+    toggle_acquisition_button: ttk.Button
+    is_acquiring: bool # To store acquisition status
 
     def __init__(self, root: tk.Tk) -> None:
         self.root = root
@@ -595,9 +605,10 @@ class SensorMonitorApp:
 
         # Configure the root window
         self.root.columnconfigure(0, weight=1)
-        self.root.rowconfigure(0, weight=1)  # Notebook row
-        self.root.rowconfigure(1, weight=0)  # Button frame row
-        self.root.rowconfigure(2, weight=0)  # CAN Status bar row
+        self.root.rowconfigure(0, weight=0)  # Acquisition Controls row
+        self.root.rowconfigure(1, weight=1)  # Notebook row
+        self.root.rowconfigure(2, weight=0)  # Button frame row
+        self.root.rowconfigure(3, weight=0)  # CAN Status bar row
 
         # Create sensor data buffer (already configured for 5 modules)
         # Buffer size might need adjustment based on expected data rate / desired history
@@ -606,7 +617,7 @@ class SensorMonitorApp:
         # --- Status Bar (Added for CAN status) ---
         self.status_frame = ttk.Frame(self.root)
         # Grid position changed to be at the bottom
-        self.status_frame.grid(row=2, column=0, sticky="ew", padx=10, pady=(5, 5))
+        self.status_frame.grid(row=3, column=0, sticky="ew", padx=10, pady=(5, 5))
         self.status_var = tk.StringVar(value="Initializing...")
         self.status_label = ttk.Label(self.status_frame, textvariable=self.status_var, anchor=tk.W, relief=tk.SUNKEN, padding=2)
         self.status_label.pack(fill=tk.X, expand=True)
@@ -615,10 +626,50 @@ class SensorMonitorApp:
         # Pass a callback to update the status bar (optional, needs careful implementation)
         self.can_reader = CanReaderThread(self.sensor_buffer, status_callback=self.update_status_bar)
         self.can_reader.start()  # Start reading CAN data
+        
+        # Create and start the Vehicle CAN Communication thread
+        self.vehicle_can_comm = VehicleCanCommsThread(self.update_status_bar, None) # Pass status callback
+        self.vehicle_can_comm.start()  # Start vehicle CAN communication
+
+        # --- Style Configuration ---
+        style = ttk.Style()
+        
+        # Configure styles to remove focus ring and set text color
+        style.configure("RedText.TButton", 
+                        foreground="red", 
+                        focusthickness=0, 
+                        highlightthickness=0)
+        # Ensure the focus settings apply by mapping them to an empty value for the 'focus' state
+        # This tells ttk to not change these properties on focus.
+        style.map("RedText.TButton",
+                  focusthickness=[('focus', 0)],
+                  highlightthickness=[('focus', 0)])
+
+        style.configure("GreenText.TButton", 
+                        foreground="green", 
+                        focusthickness=0, 
+                        highlightthickness=0)
+        style.map("GreenText.TButton",
+                  focusthickness=[('focus', 0)],
+                  highlightthickness=[('focus', 0)])
+
+
+        # --- Acquisition Control Buttons ---
+        self.acquisition_controls_frame = ttk.Frame(self.root)
+        self.acquisition_controls_frame.grid(row=0, column=0, sticky="ew", padx=10, pady=(5,0))
+
+        self.is_acquiring = False  # Initial state: not acquiring
+
+        self.toggle_acquisition_button = ttk.Button(
+            self.acquisition_controls_frame, text="Start Acquisition", command=self.toggle_acquisition
+        )
+        self.toggle_acquisition_button.pack(side=tk.RIGHT, padx=5)
+        # Set initial style for the button
+        self._update_acquisition_button_style()
 
         # --- Notebook Setup (Remains similar) ---
         self.notebook = ttk.Notebook(self.root)
-        self.notebook.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
+        self.notebook.grid(row=1, column=0, sticky="nsew", padx=5, pady=5)
 
         # Create the plot tab(s) - Example for one module
         # You might create multiple tabs or allow dynamic creation
@@ -627,18 +678,41 @@ class SensorMonitorApp:
         # Add Close button
         self.button_frame = ttk.Frame(self.root)
         # Grid row changed to be above the CAN status bar
-        self.button_frame.grid(row=1, column=0, sticky="e", padx=10, pady=(5, 0))
+        self.button_frame.grid(row=2, column=0, sticky="e", padx=10, pady=(5, 0))
         self.close_button = ttk.Button(self.button_frame, text="Close", command=self.on_close)
         self.close_button.pack(side=tk.RIGHT)
 
         # Bind close event
         self.root.protocol("WM_DELETE_WINDOW", self.on_close)
 
+
     def update_status_bar(self, message: str, is_error: bool = False) -> None:
         """Thread-safe method to update the status bar."""
         # Use `after` to ensure GUI updates happen in the main thread
         self.root.after(0, lambda: self.status_var.set(message))
         # You could also change label colors here based on is_error
+
+    def _update_acquisition_button_style(self) -> None:
+        """Updates the toggle acquisition button's text and color based on is_acquiring state."""
+        if self.is_acquiring:
+            self.toggle_acquisition_button.config(text="Stop Acquisition", style="RedText.TButton")
+        else:
+            self.toggle_acquisition_button.config(text="Start Acquisition", style="GreenText.TButton")
+
+    def toggle_acquisition(self) -> None:
+        """Toggles CAN data acquisition on or off."""
+        self.is_acquiring = not self.is_acquiring
+        if self.vehicle_can_comm:
+            self.vehicle_can_comm.vehicle_status.set(self.is_acquiring)
+            if self.is_acquiring:
+                self.update_status_bar("CAN Acquisition Started.", False)
+                print("CAN Acquisition Started.")
+            else:
+                self.update_status_bar("CAN Acquisition Stopped.", False)
+                print("CAN Acquisition Stopped.")
+        self._update_acquisition_button_style()
+        # Shift focus away from the button to prevent lingering focus highlight
+        self.root.focus_set()
 
     def on_close(self) -> None:
         """Handle application close."""
@@ -657,6 +731,16 @@ class SensorMonitorApp:
             self.can_reader.join(timeout=2.0)  # Wait for thread to finish
             if self.can_reader.is_alive():
                 print("CAN reader thread did not stop gracefully.")
+
+        # Ensure vehicle communication is stopped
+        if self.vehicle_can_comm:
+            self.vehicle_can_comm.vehicle_status.set(False) # Explicitly stop acquisition
+            if self.vehicle_can_comm.is_alive():
+                print("Stopping Vehicle CAN Comm thread...")
+                self.vehicle_can_comm.stop()
+                self.vehicle_can_comm.join(timeout=2.0)
+                if self.vehicle_can_comm.is_alive():
+                    print("Vehicle CAN Comm thread did not stop gracefully.")
 
         self.root.destroy()
         print("Application closed.")

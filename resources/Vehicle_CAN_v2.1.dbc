@@ -1,0 +1,879 @@
+VERSION ""
+
+
+NS_ : 
+	NS_DESC_
+	CM_
+	BA_DEF_
+	BA_
+	VAL_
+	CAT_DEF_
+	CAT_
+	FILTER
+	BA_DEF_DEF_
+	EV_DATA_
+	ENVVAR_DATA_
+	SGTYPE_
+	SGTYPE_VAL_
+	BA_DEF_SGTYPE_
+	BA_SGTYPE_
+	SIG_TYPE_REF_
+	VAL_TABLE_
+	SIG_GROUP_
+	SIG_VALTYPE_
+	SIGTYPE_VALTYPE_
+	BO_TX_BU_
+	BA_DEF_REL_
+	BA_REL_
+	BA_DEF_DEF_REL_
+	BU_SG_REL_
+	BU_EV_REL_
+	BU_BO_REL_
+	SG_MUL_VAL_
+
+BS_:
+
+BU_: MSU DCDC TMC VCU IOT_Gateway BMC
+
+
+BO_ 46 T_HighEnergyAuxMon_Subpack_4: 8 BMC
+ SG_ TAuxBattMonEgyHi_2_2_4 : 48|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+ SG_ TAuxBattMonEgyHi_2_2_3 : 32|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+ SG_ TAuxBattMonEgyHi_2_2_2 : 16|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+ SG_ TAuxBattMonEgyHi_2_2_1 : 0|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+
+BO_ 45 T_HighEnergyAuxMon_Subpack_3: 8 BMC
+ SG_ TAuxBattMonEgyHi_2_1_4 : 48|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+ SG_ TAuxBattMonEgyHi_2_1_3 : 32|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+ SG_ TAuxBattMonEgyHi_2_1_2 : 16|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+ SG_ TAuxBattMonEgyHi_2_1_1 : 0|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+
+BO_ 44 T_HighEnergyAuxMon_Subpack_2: 8 BMC
+ SG_ TAuxBattMonEgyHi_1_2_4 : 48|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+ SG_ TAuxBattMonEgyHi_1_2_3 : 32|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+ SG_ TAuxBattMonEgyHi_1_2_2 : 16|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+ SG_ TAuxBattMonEgyHi_1_2_1 : 0|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+
+BO_ 43 T_HighEnergyAuxMon_Subpack_1: 8 BMC
+ SG_ TAuxBattMonEgyHi_1_1_4 : 48|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+ SG_ TAuxBattMonEgyHi_1_1_3 : 32|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+ SG_ TAuxBattMonEgyHi_1_1_2 : 16|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+ SG_ TAuxBattMonEgyHi_1_1_1 : 0|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+
+BO_ 42 T_HighPowerAuxMon_Subpack_4: 8 BMC
+ SG_ TAuxBattMonPwrHi_2_1_8 : 48|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+ SG_ TAuxBattMonPwrHi_2_1_7 : 32|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+ SG_ TAuxBattMonPwrHi_2_1_6 : 16|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+ SG_ TAuxBattMonPwrHi_2_1_5 : 0|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+
+BO_ 41 T_HighPowerAuxMon_Subpack_3: 8 BMC
+ SG_ TAuxBattMonPwrHi_2_1_4 : 48|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+ SG_ TAuxBattMonPwrHi_2_1_3 : 32|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+ SG_ TAuxBattMonPwrHi_2_1_2 : 16|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+ SG_ TAuxBattMonPwrHi_2_1_1 : 0|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+
+BO_ 40 T_HighPowerAuxMon_Subpack_2: 8 BMC
+ SG_ TAuxBattMonPwrHi_1_1_8 : 48|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+ SG_ TAuxBattMonPwrHi_1_1_7 : 32|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+ SG_ TAuxBattMonPwrHi_1_1_6 : 16|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+ SG_ TAuxBattMonPwrHi_1_1_5 : 0|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+
+BO_ 39 T_HighPowerAuxMon_Subpack_1: 8 BMC
+ SG_ TAuxBattMonPwrHi_1_1_4 : 48|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+ SG_ TAuxBattMonPwrHi_1_1_3 : 32|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+ SG_ TAuxBattMonPwrHi_1_1_2 : 16|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+ SG_ TAuxBattMonPwrHi_1_1_1 : 0|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+
+BO_ 52 BattPacEgy_Capacity: 8 BMC
+ SG_ RatChaGrpPacBattEgyHi_2_2_1 : 48|16@1+ (0.006103515625,-2) [-2|1.9999] ""  TMC
+ SG_ RatChaGrpPacBattEgyHi_2_1_1 : 32|16@1+ (0.006103515625,-2) [-2|1.9999] ""  TMC
+ SG_ RatChaGrpPacBattEgyHi_1_2_1 : 16|16@1+ (0.006103515625,-2) [-2|1.9999] ""  TMC
+ SG_ RatChaGrpPacBattEgyHi_1_1_1 : 0|16@1+ (0.006103515625,-2) [-2|1.9999] ""  TMC
+
+BO_ 51 BattPacPwr_Capacity: 8 BMC
+ SG_ RatChaGrpPacBattPwrHi_2_1_2 : 48|16@1+ (0.006103515625,-2) [-2|1.9999] ""  TMC
+ SG_ RatChaGrpPacBattPwrHi_2_1_1 : 32|16@1+ (0.006103515625,-2) [-2|1.9999] ""  TMC
+ SG_ RatChaGrpPacBattPwrHi_1_1_2 : 16|16@1+ (0.006103515625,-2) [-2|1.9999] ""  TMC
+ SG_ RatChaGrpPacBattPwrHi_1_1_1 : 0|16@1+ (0.006103515625,-2) [-2|1.9999] ""  TMC
+
+BO_ 50 T_HighEnergyrCellMax: 8 BMC
+ SG_ TCellBattEgyHiMax_2_2_1 : 48|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+ SG_ TCellBattEgyHiMax_2_1_1 : 32|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+ SG_ TCellBattEgyHiMax_1_2_1 : 16|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+ SG_ TCellBattEgyHiMax_1_1_1 : 0|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+
+BO_ 49 T_HighEnergyrCellMin: 8 BMC
+ SG_ TCellBattEgyHiMin_2_2_1 : 48|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+ SG_ TCellBattEgyHiMin_2_1_1 : 32|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+ SG_ TCellBattEgyHiMin_1_2_1 : 16|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+ SG_ TCellBattEgyHiMin_1_1_1 : 0|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+
+BO_ 48 T_HighPowerCellMax: 8 BMC
+ SG_ TCellBattPwrHiMax_2_1_2 : 48|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+ SG_ TCellBattPwrHiMax_2_1_1 : 32|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+ SG_ TCellBattPwrHiMax_1_1_2 : 16|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+ SG_ TCellBattPwrHiMax_1_1_1 : 0|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+
+BO_ 47 T_HighPowerCellMin: 8 BMC
+ SG_ TCellBattPwrHiMin_2_1_2 : 48|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+ SG_ TCellBattPwrHiMin_2_1_1 : 32|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+ SG_ TCellBattPwrHiMin_1_1_2 : 16|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+ SG_ TCellBattPwrHiMin_1_1_1 : 0|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC
+
+BO_ 38 DcDcConverter_State_1: 2 DCDC
+ SG_ StOperDcdcPacBattHyb_1 : 8|8@1+ (1,0) [0|255] ""  BMC
+ SG_ StOperDcdcPacBattHyb_0 : 0|8@1+ (1,0) [0|255] ""  BMC
+
+BO_ 73 TMC_Status: 2 TMC
+ SG_ StTme : 8|8@1+ (1,0) [0|5] ""  VCU
+ SG_ StTmeErr : 0|8@1+ (1,0) [0|3] ""  VCU
+
+BO_ 72 Tco_Subpack_8: 2 TMC
+ SG_ TCoolBattPac8 : 0|16@1+ (0.0078125,0) [0|511.9921875] "°K"  VCU
+
+BO_ 71 Tco_Subpack_7: 2 TMC
+ SG_ TCoolBattPac7 : 0|16@1+ (0.0078125,0) [0|511.9921875] "°K"  VCU
+
+BO_ 70 Tco_Subpack_6: 2 TMC
+ SG_ TCoolBattPac6 : 0|16@1+ (0.0078125,0) [0|511.9921875] "°K"  VCU
+
+BO_ 69 Tco_Subpack_5: 2 TMC
+ SG_ TCoolBattPac5 : 0|16@1+ (0.0078125,0) [0|511.9921875] "°K"  VCU
+
+BO_ 68 Tco_Subpack_4: 2 TMC
+ SG_ TCoolBattPac4 : 0|16@1+ (0.0078125,0) [0|511.9921875] "°K"  VCU
+
+BO_ 67 Tco_Subpack_3: 2 TMC
+ SG_ TCoolBattPac3 : 0|16@1+ (0.0078125,0) [0|511.9921875] "°K"  VCU
+
+BO_ 66 Tco_Subpack_2: 2 TMC
+ SG_ TCoolBattPac2 : 0|16@1+ (0.0078125,0) [0|511.9921875] "°K"  VCU
+
+BO_ 65 Tco_Subpack_1: 2 TMC
+ SG_ TCoolBattPac1 : 0|16@1+ (0.0078125,0) [0|511.9921875] "°K"  VCU
+
+BO_ 64 Tamb: 2 VCU
+ SG_ TAirAmb : 0|16@1+ (0.0078125,0) [0|511.9921875] "K"  TMC
+
+BO_ 1654 Sensor_Msg8_8: 8 MSU
+ SG_ VERSION_MINOR_8 : 8|8@1+ (1,0) [0|255] ""  BMC
+ SG_ VERSION_MAJOR_8 : 0|8@1+ (1,0) [0|255] ""  BMC
+
+BO_ 1638 Sensor_Msg8_7: 8 MSU
+ SG_ VERSION_MINOR_7 : 8|8@1+ (1,0) [0|255] ""  BMC
+ SG_ VERSION_MAJOR_7 : 0|8@1+ (1,0) [0|255] ""  BMC
+
+BO_ 1606 Sensor_Msg8_5: 8 MSU
+ SG_ VERSION_MINOR_5 : 8|8@1+ (1,0) [0|255] ""  BMC
+ SG_ VERSION_MAJOR_5 : 0|8@1+ (1,0) [0|255] ""  BMC
+
+BO_ 1590 Sensor_Msg8_4: 8 MSU
+ SG_ VERSION_MINOR_4 : 8|8@1+ (1,0) [0|255] ""  BMC
+ SG_ VERSION_MAJOR_4 : 0|8@1+ (1,0) [0|255] ""  BMC
+
+BO_ 1622 Sensor_Msg8_6: 8 MSU
+ SG_ VERSION_MINOR_6 : 8|8@1+ (1,0) [0|255] ""  BMC
+ SG_ VERSION_MAJOR_6 : 0|8@1+ (1,0) [0|255] ""  BMC
+
+BO_ 1574 Sensor_Msg8_3: 8 MSU
+ SG_ VERSION_MINOR_3 : 8|8@1+ (1,0) [0|255] ""  BMC
+ SG_ VERSION_MAJOR_3 : 0|8@1+ (1,0) [0|255] ""  BMC
+
+BO_ 1558 Sensor_Msg8_2: 8 MSU
+ SG_ VERSION_MINOR_2 : 8|8@1+ (1,0) [0|255] ""  BMC
+ SG_ VERSION_MAJOR_2 : 0|8@1+ (1,0) [0|255] ""  BMC
+
+BO_ 1542 Sensor_Msg8_1: 8 MSU
+ SG_ VERSION_MINOR_1 : 8|8@1+ (1,0) [0|255] ""  BMC
+ SG_ VERSION_MAJOR_1 : 0|8@1+ (1,0) [0|255] ""  BMC
+
+BO_ 1653 Sensor_Msg4_8: 8 MSU
+ SG_ Filter_Pressure_Diff_4_8 : 59|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_Pressure_Diff_3_8 : 58|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_Pressure_Diff_2_8 : 57|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_Pressure_Diff_1_8 : 56|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_Pressure_Abs_8 : 60|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_H2C_Abs_8 : 62|1@1+ (1,0) [0|1] ""  BMC
+ SG_ ADC_VBAT_8 : 32|16@1- (0.01,0) [0|100] "V"  BMC
+ SG_ ADC_NTC2_8 : 16|16@1- (0.01,0) [-40|125] "°C"  TMC,BMC
+
+BO_ 1637 Sensor_Msg4_7: 8 MSU
+ SG_ Filter_Pressure_Diff_4_7 : 59|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_Pressure_Diff_3_7 : 58|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_Pressure_Diff_2_7 : 57|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_Pressure_Diff_1_7 : 56|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_Pressure_Abs_7 : 60|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_H2C_Abs_7 : 62|1@1+ (1,0) [0|1] ""  BMC
+ SG_ ADC_VBAT_7 : 32|16@1- (0.01,0) [0|100] "V"  BMC
+ SG_ ADC_NTC2_7 : 16|16@1- (0.01,0) [-40|125] "°C"  TMC,BMC
+
+BO_ 1621 Sensor_Msg4_6: 8 MSU
+ SG_ Filter_Pressure_Diff_4_6 : 59|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_Pressure_Diff_3_6 : 58|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_Pressure_Diff_2_6 : 57|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_Pressure_Diff_1_6 : 56|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_Pressure_Abs_6 : 60|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_H2C_Abs_6 : 62|1@1+ (1,0) [0|1] ""  BMC
+ SG_ ADC_VBAT_6 : 32|16@1- (0.01,0) [0|100] "V"  BMC
+ SG_ ADC_NTC2_6 : 16|16@1- (0.01,0) [-40|125] "°C"  TMC,BMC
+
+BO_ 1605 Sensor_Msg4_5: 8 MSU
+ SG_ Filter_Pressure_Diff_4_5 : 59|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_Pressure_Diff_3_5 : 58|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_Pressure_Diff_2_5 : 57|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_Pressure_Diff_1_5 : 56|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_Pressure_Abs_5 : 60|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_H2C_Abs_5 : 62|1@1+ (1,0) [0|1] ""  BMC
+ SG_ ADC_VBAT_5 : 32|16@1- (0.01,0) [0|100] "V"  BMC
+ SG_ ADC_NTC2_5 : 16|16@1- (0.01,0) [-40|125] "°C"  TMC,BMC
+
+BO_ 1589 Sensor_Msg4_4: 8 MSU
+ SG_ Filter_Pressure_Diff_4_4 : 59|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_Pressure_Diff_3_4 : 58|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_Pressure_Diff_2_4 : 57|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_Pressure_Diff_1_4 : 56|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_Pressure_Abs_4 : 60|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_H2C_Abs_4 : 62|1@1+ (1,0) [0|1] ""  BMC
+ SG_ ADC_VBAT_4 : 32|16@1- (0.01,0) [0|100] "V"  BMC
+ SG_ ADC_NTC2_4 : 16|16@1- (0.01,0) [-40|125] "°C"  TMC,BMC
+
+BO_ 1573 Sensor_Msg4_3: 8 MSU
+ SG_ Filter_Pressure_Diff_4_3 : 59|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_Pressure_Diff_3_3 : 58|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_Pressure_Diff_2_3 : 57|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_Pressure_Diff_1_3 : 56|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_Pressure_Abs_3 : 60|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_H2C_Abs_3 : 62|1@1+ (1,0) [0|1] ""  BMC
+ SG_ ADC_VBAT_3 : 32|16@1- (0.01,0) [0|100] "V"  BMC
+ SG_ ADC_NTC2_3 : 16|16@1- (0.01,0) [-40|125] "°C"  TMC,BMC
+
+BO_ 1557 Sensor_Msg4_2: 8 MSU
+ SG_ Filter_Pressure_Diff_4_2 : 59|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_Pressure_Diff_3_2 : 58|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_Pressure_Diff_2_2 : 57|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_Pressure_Diff_1_2 : 56|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_Pressure_Abs_2 : 60|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_H2C_Abs_2 : 62|1@1+ (1,0) [0|1] ""  BMC
+ SG_ ADC_VBAT_2 : 32|16@1- (0.01,0) [0|100] "V"  BMC
+ SG_ ADC_NTC2_2 : 16|16@1- (0.01,0) [-40|125] "°C"  TMC,BMC
+
+BO_ 1541 Sensor_Msg4_1: 8 MSU
+ SG_ ADC_VBAT_1 : 32|16@1- (0.01,0) [0|100] "V"  BMC
+ SG_ Filter_H2C_Abs_1 : 62|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_Pressure_Abs_1 : 60|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_Pressure_Diff_4_1 : 59|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_Pressure_Diff_3_1 : 58|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_Pressure_Diff_2_1 : 57|1@1+ (1,0) [0|1] ""  BMC
+ SG_ Filter_Pressure_Diff_1_1 : 56|1@1+ (1,0) [0|1] ""  BMC
+ SG_ ADC_NTC2_1 : 16|16@1- (0.01,0) [-40|125] "°C"  TMC,BMC
+
+BO_ 1652 Sensor_Msg3_8: 8 MSU
+ SG_ KP466_Status_8 : 16|8@1+ (1,0) [0|255] ""  BMC
+ SG_ KP466_Pressure_8 : 32|32@1- (0.001,0) [60|165] "kPa"  BMC
+
+BO_ 1636 Sensor_Msg3_7: 8 MSU
+ SG_ KP466_Status_7 : 16|8@1+ (1,0) [0|255] ""  BMC
+ SG_ KP466_Pressure_7 : 32|32@1- (0.001,0) [60|165] "kPa"  BMC
+
+BO_ 1620 Sensor_Msg3_6: 8 MSU
+ SG_ KP466_Status_6 : 16|8@1+ (1,0) [0|255] ""  BMC
+ SG_ KP466_Pressure_6 : 32|32@1- (0.001,0) [60|165] "kPa"  BMC
+
+BO_ 1604 Sensor_Msg3_5: 8 MSU
+ SG_ KP466_Status_5 : 16|8@1+ (1,0) [0|255] ""  BMC
+ SG_ KP466_Pressure_5 : 32|32@1- (0.001,0) [60|165] "kPa"  BMC
+
+BO_ 1588 Sensor_Msg3_4: 8 MSU
+ SG_ KP466_Status_4 : 16|8@1+ (1,0) [0|255] ""  BMC
+ SG_ KP466_Pressure_4 : 32|32@1- (0.001,0) [60|165] "kPa"  BMC
+
+BO_ 1572 Sensor_Msg3_3: 8 MSU
+ SG_ KP466_Status_3 : 16|8@1+ (1,0) [0|255] ""  BMC
+ SG_ KP466_Pressure_3 : 32|32@1- (0.001,0) [60|165] "kPa"  BMC
+
+BO_ 1556 Sensor_Msg3_2: 8 MSU
+ SG_ KP466_Status_2 : 16|8@1+ (1,0) [0|255] ""  BMC
+ SG_ KP466_Pressure_2 : 32|32@1- (0.001,0) [60|165] "kPa"  BMC
+
+BO_ 1540 Sensor_Msg3_1: 8 MSU
+ SG_ KP466_Pressure_1 : 32|32@1- (0.001,0) [60|165] "kPa"  BMC
+ SG_ KP466_Status_1 : 16|8@1+ (1,0) [0|255] ""  BMC
+
+BO_ 1650 Sensor_Msg1_8: 8 MSU
+ SG_ SHT_Status_8 : 56|8@1+ (1,0) [0|255] ""  BMC
+ SG_ SHT_Humidity_8 : 0|32@1- (0.001,0) [0|100] "%"  BMC
+
+BO_ 1634 Sensor_Msg1_7: 8 MSU
+ SG_ SHT_Status_7 : 56|8@1+ (1,0) [0|255] ""  BMC
+ SG_ SHT_Humidity_7 : 0|32@1- (0.001,0) [0|100] "%"  BMC
+
+BO_ 1618 Sensor_Msg1_6: 8 MSU
+ SG_ SHT_Status_6 : 56|8@1+ (1,0) [0|255] ""  BMC
+ SG_ SHT_Humidity_6 : 0|32@1- (0.001,0) [0|100] "%"  BMC
+
+BO_ 1602 Sensor_Msg1_5: 8 MSU
+ SG_ SHT_Status_5 : 56|8@1+ (1,0) [0|255] ""  BMC
+ SG_ SHT_Humidity_5 : 0|32@1- (0.001,0) [0|100] "%"  BMC
+
+BO_ 1586 Sensor_Msg1_4: 8 MSU
+ SG_ SHT_Status_4 : 56|8@1+ (1,0) [0|255] ""  BMC
+ SG_ SHT_Humidity_4 : 0|32@1- (0.001,0) [0|100] "%"  BMC
+
+BO_ 1570 Sensor_Msg1_3: 8 MSU
+ SG_ SHT_Status_3 : 56|8@1+ (1,0) [0|255] ""  BMC
+ SG_ SHT_Humidity_3 : 0|32@1- (0.001,0) [0|100] "%"  BMC
+
+BO_ 1554 Sensor_Msg1_2: 8 MSU
+ SG_ SHT_Status_2 : 56|8@1+ (1,0) [0|255] ""  BMC
+ SG_ SHT_Humidity_2 : 0|32@1- (0.001,0) [0|100] "%"  BMC
+
+BO_ 1538 Sensor_Msg1_1: 8 MSU
+ SG_ SHT_Status_1 : 56|8@1+ (1,0) [0|255] ""  BMC
+ SG_ SHT_Humidity_1 : 0|32@1- (0.001,0) [0|100] "%"  BMC
+
+BO_ 1649 Sensor_Msg0_8: 8 MSU
+ SG_ SHT_Temperature_8 : 32|32@1- (0.001,0) [-40|105] "°C"  BMC
+
+BO_ 1633 Sensor_Msg0_7: 8 MSU
+ SG_ SHT_Temperature_7 : 32|32@1- (0.001,0) [-40|105] "°C"  BMC
+
+BO_ 1617 Sensor_Msg0_6: 8 MSU
+ SG_ SHT_Temperature_6 : 32|32@1- (0.001,0) [-40|105] "°C"  BMC
+
+BO_ 1601 Sensor_Msg0_5: 8 MSU
+ SG_ SHT_Temperature_5 : 32|32@1- (0.001,0) [-40|105] "°C"  BMC
+
+BO_ 1585 Sensor_Msg0_4: 8 MSU
+ SG_ SHT_Temperature_4 : 32|32@1- (0.001,0) [-40|105] "°C"  BMC
+
+BO_ 1569 Sensor_Msg0_3: 8 MSU
+ SG_ SHT_Temperature_3 : 32|32@1- (0.001,0) [-40|105] "°C"  BMC
+
+BO_ 1553 Sensor_Msg0_2: 8 MSU
+ SG_ SHT_Temperature_2 : 32|32@1- (0.001,0) [-40|105] "°C"  BMC
+
+BO_ 1537 Sensor_Msg0_1: 8 MSU
+ SG_ SHT_Temperature_1 : 32|32@1- (0.001,0) [-40|105] "°C"  BMC
+
+BO_ 1648 H2CS_DF_8: 8 MSU
+ SG_ H2CS_H2C_8 : 16|12@1+ (0.01,-2) [-2|38.95] "%"  BMC
+
+BO_ 1632 H2CS_DF_7: 8 MSU
+ SG_ H2CS_H2C_7 : 16|12@1+ (0.01,-2) [-2|38.95] "%"  BMC
+
+BO_ 1616 H2CS_DF_6: 8 MSU
+ SG_ H2CS_H2C_6 : 16|12@1+ (0.01,-2) [-2|38.95] "%"  BMC
+
+BO_ 1600 H2CS_DF_5: 8 MSU
+ SG_ H2CS_H2C_5 : 16|12@1+ (0.01,-2) [-2|38.95] "%"  BMC
+
+BO_ 1584 H2CS_DF_4: 8 MSU
+ SG_ H2CS_H2C_4 : 16|12@1+ (0.01,-2) [-2|38.95] "%"  BMC
+
+BO_ 1568 H2CS_DF_3: 8 MSU
+ SG_ H2CS_H2C_3 : 16|12@1+ (0.01,-2) [-2|38.95] "%"  BMC
+
+BO_ 1552 H2CS_DF_2: 8 MSU
+ SG_ H2CS_H2C_2 : 16|12@1+ (0.01,-2) [-2|38.95] "%"  BMC
+
+BO_ 1536 H2CS_DF_1: 8 MSU
+ SG_ H2CS_H2C_1 : 16|12@1+ (0.01,-2) [-2|38.95] "%"  BMC
+
+BO_ 256 CAN: 8 BMC
+ SG_ CAN_Enable : 0|8@1+ (1,0) [0|255] ""  MSU
+
+BO_ 37 Vehicle_Status: 3 VCU
+ SG_ Fault_Reset : 18|2@1+ (1,0) [0|3] ""  BMC
+ SG_ Emergency_Stop : 16|2@1+ (1,0) [0|3] ""  TMC,BMC
+ SG_ Vehicle_Mode : 8|8@1+ (1,0) [0|7] ""  TMC,BMC
+ SG_ Vehicle_Speed : 0|8@1+ (1,0) [0|255] "kmh"  BMC
+
+BO_ 36 DcDcConverter_State: 8 DCDC
+ SG_ LvWarnDcdcBattHyb_1 : 56|8@1+ (1,0) [0|255] ""  BMC
+ SG_ LvWarnDcdcBattHyb_0 : 48|8@1+ (1,0) [0|255] ""  BMC
+ SG_ LvErrDcdcBattHyb_1 : 40|8@1+ (1,0) [0|255] ""  BMC
+ SG_ LvErrDcdcBattHyb_0 : 32|8@1+ (1,0) [0|255] ""  BMC
+ SG_ LfWarnDcdcBattHyb_1 : 24|8@1+ (1,0) [0|255] ""  BMC
+ SG_ LfWarnDcdcBattHyb_0 : 16|8@1+ (1,0) [0|255] ""  BMC
+ SG_ LfErrDcdcBattHyb_1 : 8|8@1+ (1,0) [0|255] ""  BMC
+ SG_ LfErrDcdcBattHyb_0 : 0|8@1+ (1,0) [0|255] ""  BMC
+
+BO_ 35 DcDcBattery_Temperature: 4 DCDC
+ SG_ TMesDcdcBattHyb_1 : 16|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC,BMC
+ SG_ TMesDcdcBattHyb_0 : 0|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC,BMC
+
+BO_ 34 Clock_Data: 5 VCU
+ SG_ Minute : 32|8@1+ (1,0) [0|63] "min"  BMC
+ SG_ Hour : 24|8@1+ (1,0) [0|31] "h"  BMC
+ SG_ Day : 16|8@1+ (1,0) [0|31] ""  BMC
+ SG_ Month : 8|8@1+ (1,0) [0|15] ""  BMC
+ SG_ Year : 0|8@1+ (1,0) [0|63] ""  BMC
+
+BO_ 33 Battery_Status: 8 VCU
+ SG_ Charging_Time_Hours : 56|8@1+ (1,0) [0|255] ""  BMC,TMC
+ SG_ Charging_Time_Minutes : 48|8@1+ (1,0) [0|255] ""  TMC,BMC
+ SG_ Battery_Cooling_Active : 40|8@1+ (1,0) [0|3] ""  TMC,BMC
+ SG_ ECU_Ready : 32|8@1+ (1,0) [0|3] ""  TMC,BMC
+ SG_ HV_ON : 24|8@1+ (1,0) [0|3] ""  BMC
+ SG_ Precharge_Contactor_Status : 16|8@1+ (1,0) [0|3] ""  BMC
+ SG_ Main_Minus_Contactor_Status : 8|8@1+ (1,0) [0|3] ""  BMC
+ SG_ Main_Plus_Contactor_Status : 0|8@1+ (1,0) [0|3] ""  BMC
+
+BO_ 32 HiEgyBattPack_Voltage: 4 DCDC
+ SG_ UBattEgyHiDcdc_0 : 0|16@1+ (0.0625,-2048) [-2048|2047.9375] "V"  BMC
+ SG_ UBattEgyHiDcdc_1 : 16|16@1+ (0.0625,-2048) [-2048|2047.9375] "V"  BMC
+
+BO_ 31 HiPwrBattPack_Voltage: 4 DCDC
+ SG_ UBattPwrHiDcdc_1 : 16|16@1+ (0.0625,-2048) [-2048|2047.9375] "V"  BMC
+ SG_ UBattPwrHiDcdc_0 : 0|16@1+ (0.0625,-2048) [-2048|2047.9375] "V"  BMC
+
+BO_ 30 HiEgyBattPack_Current: 4 DCDC
+ SG_ IBattEgyHiDcdc_1 : 16|16@1+ (0.0625,-2048) [-2048|2047.9375] "A"  BMC
+ SG_ IBattEgyHiDcdc_0 : 0|16@1+ (0.0625,-2048) [-2048|2047.9375] "A"  BMC
+
+BO_ 29 HiPwrBattPack_Current: 4 DCDC
+ SG_ IBattPwrHiDcdc_1 : 16|16@1+ (0.0625,-2048) [-2048|2047.9375] "A"  BMC
+ SG_ IBattPwrHiDcdc_0 : 0|16@1+ (0.0625,-2048) [-2048|2047.9375] "A"  BMC
+
+BO_ 28 ChaDcha_CycleNumber: 2 BMC
+ SG_ NrCycChaDchaBattTot : 0|16@1+ (1,0) [0|65535] ""  VCU
+
+BO_ 27 DcDcHyb_Battery: 8 BMC
+ SG_ StActOperDcdcPacBattHybReq_1 : 56|8@1+ (1,0) [0|3] ""  DCDC
+ SG_ StActOperDcdcPacBattHybReq_0 : 48|8@1+ (1,0) [0|3] ""  DCDC
+ SG_ StOperDcdcPacBattHybReq_1 : 40|8@1+ (1,0) [0|3] ""  VCU,DCDC
+ SG_ StOperDcdcPacBattHybReq_0 : 32|8@1+ (1,0) [0|3] ""  VCU,DCDC
+ SG_ TiEgyTrfDcdcBattHy_1 : 16|16@1+ (1,0) [0|65535] "s"  DCDC
+ SG_ TiEgyTrfDcdcBattHy_0 : 0|16@1+ (1,0) [0|65535] "s"  DCDC
+
+BO_ 26 PwrDcdc_Setpoint: 8 BMC
+ SG_ EgyDcdcPacBattHybRSp_1 : 48|16@1+ (1,0) [0|65535] "Wh"  DCDC
+ SG_ EgyDcdcPacBattHybRSp_0 : 32|16@1+ (1,0) [0|65535] "Wh"  DCDC
+ SG_ PwrDcdcPacBattHybSp_1 : 16|16@1+ (31.9995117112993,-1048544) [-1048544|1048544] "W"  DCDC
+ SG_ PwrDcdcPacBattHybSp_0 : 0|16@1+ (31.9995117112993,-1048544) [-1048544|1048544] "W"  DCDC
+
+BO_ 25 Battery_Info: 8 BMC
+ SG_ BMS_Conf_Type : 56|8@1+ (1,0) [0|3] ""  VCU
+ SG_ Isolation_Monitor_Status : 40|8@1+ (1,0) [0|3] ""  VCU
+ SG_ Interlock_Status : 48|8@1+ (1,0) [0|3] ""  VCU
+ SG_ Battery_State : 32|8@1+ (1,0) [0|7] ""  VCU
+ SG_ Battery_Failure : 0|32@1+ (1,0) [0|4294967295] ""  VCU
+
+BO_ 24 Hvs_Safety: 4 BMC
+ SG_ IHvsBattSensSfty : 16|16@1+ (0.0625,-2048) [-2048|2047.9375] "A"  VCU
+ SG_ UHvsLinkSfty : 0|16@1+ (0.0625,-2048) [-2048|2047.9375] "V"  VCU
+
+BO_ 23 BattPac_PwrLimit: 4 BMC
+ SG_ PwrDchaBattPacLim : 16|16@1+ (15.9997558556496,0) [0|1048544] "W"  VCU
+ SG_ PwrChaBattPacLim : 0|16@1+ (15.9997558556496,0) [0|1048544] "W"  VCU
+
+BO_ 22 Ucell_BattPwr: 4 BMC
+ SG_ UCellBattPwrHiMax : 16|16@1+ (0.00048828125,-16) [-16|15.999511] "V"  VCU
+ SG_ UCellBattPwrHiMin : 0|16@1+ (0.00048828125,-16) [-16|15.99951171875] "V"  VCU
+
+BO_ 21 Ucell_BattEgy: 4 BMC
+ SG_ UCellBattEgyHiMax : 16|16@1+ (0.00048828125,-16) [-16|15.99951171875] "V"  VCU
+ SG_ UCellBattEgyHiMin : 0|16@1+ (0.00048828125,-16) [-16|15.99951171875] "V"  VCU
+
+BO_ 19 Tcell_BattPwr: 4 BMC
+ SG_ TCellBattPwrHiMin : 0|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC,VCU
+ SG_ TCellBattPwrHiMax : 16|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC,VCU
+
+BO_ 18 Tcell_BattEgy: 4 BMC
+ SG_ TCellBattEgyHiMax : 16|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC,VCU
+ SG_ TCellBattEgyHiMin : 0|16@1+ (0.0078125,0) [0|511.9921875] "°K"  TMC,VCU
+
+BO_ 17 Batt_State: 4 BMC
+ SG_ RatChaBatt : 16|16@1+ (0.006103515625,-2) [-2|1.9999] ""  TMC,VCU
+ SG_ RatCpNomBatt : 0|16@1+ (0.0030517578125,0) [0|1.9999] ""  VCU
+
+BO_ 16 BattPac_Capacity: 4 BMC
+ SG_ CpBattPac : 16|16@1+ (7.99987792782482,0) [0|524272] "C"  VCU
+ SG_ CpBattPacMax : 0|16@1+ (7.99987792782482,0) [0|524272] "C"  VCU
+
+
+
+CM_ SG_ 46 TAuxBattMonEgyHi_2_2_4 "High energy battery monitor unit temperature";
+CM_ SG_ 46 TAuxBattMonEgyHi_2_2_3 "High energy battery monitor unit temperature";
+CM_ SG_ 46 TAuxBattMonEgyHi_2_2_2 "High energy battery monitor unit temperature";
+CM_ SG_ 46 TAuxBattMonEgyHi_2_2_1 "High energy battery monitor unit temperature";
+CM_ SG_ 45 TAuxBattMonEgyHi_2_1_4 "High energy battery monitor unit temperature";
+CM_ SG_ 45 TAuxBattMonEgyHi_2_1_3 "High energy battery monitor unit temperature";
+CM_ SG_ 45 TAuxBattMonEgyHi_2_1_2 "High energy battery monitor unit temperature";
+CM_ SG_ 45 TAuxBattMonEgyHi_2_1_1 "High energy battery monitor unit temperature";
+CM_ SG_ 44 TAuxBattMonEgyHi_1_2_4 "High energy battery monitor unit temperature";
+CM_ SG_ 44 TAuxBattMonEgyHi_1_2_3 "High energy battery monitor unit temperature";
+CM_ SG_ 44 TAuxBattMonEgyHi_1_2_2 "High energy battery monitor unit temperature";
+CM_ SG_ 44 TAuxBattMonEgyHi_1_2_1 "High energy battery monitor unit temperature";
+CM_ SG_ 43 TAuxBattMonEgyHi_1_1_4 "High energy battery monitor unit temperature";
+CM_ SG_ 43 TAuxBattMonEgyHi_1_1_3 "High energy battery monitor unit temperature";
+CM_ SG_ 43 TAuxBattMonEgyHi_1_1_2 "High energy battery monitor unit temperature";
+CM_ SG_ 43 TAuxBattMonEgyHi_1_1_1 "High energy battery monitor unit temperature";
+CM_ SG_ 42 TAuxBattMonPwrHi_2_1_8 "High power battery monitor unit temperature";
+CM_ SG_ 42 TAuxBattMonPwrHi_2_1_7 "High power battery monitor unit temperature";
+CM_ SG_ 42 TAuxBattMonPwrHi_2_1_6 "High power battery monitor unit temperature";
+CM_ SG_ 42 TAuxBattMonPwrHi_2_1_5 "High power battery monitor unit temperature";
+CM_ SG_ 41 TAuxBattMonPwrHi_2_1_4 "High power battery monitor unit temperature";
+CM_ SG_ 41 TAuxBattMonPwrHi_2_1_3 "High power battery monitor unit temperature";
+CM_ SG_ 41 TAuxBattMonPwrHi_2_1_2 "High power battery monitor unit temperature";
+CM_ SG_ 41 TAuxBattMonPwrHi_2_1_1 "High power battery monitor unit temperature";
+CM_ SG_ 40 TAuxBattMonPwrHi_1_1_8 "High power battery monitor unit temperature";
+CM_ SG_ 40 TAuxBattMonPwrHi_1_1_7 "High power battery monitor unit temperature";
+CM_ SG_ 40 TAuxBattMonPwrHi_1_1_6 "High power battery monitor unit temperature";
+CM_ SG_ 40 TAuxBattMonPwrHi_1_1_5 "High power battery monitor unit temperature";
+CM_ SG_ 39 TAuxBattMonPwrHi_1_1_4 "High power battery monitor unit temperature";
+CM_ SG_ 39 TAuxBattMonPwrHi_1_1_3 "High power battery monitor unit temperature";
+CM_ SG_ 39 TAuxBattMonPwrHi_1_1_2 "High power battery monitor unit temperature";
+CM_ SG_ 39 TAuxBattMonPwrHi_1_1_1 "High power battery monitor unit temperature";
+CM_ SG_ 52 RatChaGrpPacBattEgyHi_2_2_1 "Battery high energy state of charge";
+CM_ SG_ 52 RatChaGrpPacBattEgyHi_2_1_1 "Battery high energy state of charge";
+CM_ SG_ 52 RatChaGrpPacBattEgyHi_1_2_1 "Battery high energy state of charge";
+CM_ SG_ 52 RatChaGrpPacBattEgyHi_1_1_1 "Battery high energy state of charge";
+CM_ SG_ 51 RatChaGrpPacBattPwrHi_2_1_2 "Battery high power state of charge";
+CM_ SG_ 51 RatChaGrpPacBattPwrHi_2_1_1 "Battery high power state of charge";
+CM_ SG_ 51 RatChaGrpPacBattPwrHi_1_1_2 "Battery high power state of charge";
+CM_ SG_ 51 RatChaGrpPacBattPwrHi_1_1_1 "Battery high power state of charge";
+CM_ SG_ 50 TCellBattEgyHiMax_2_2_1 "Maximum high energy battery cell temperature";
+CM_ SG_ 50 TCellBattEgyHiMax_2_1_1 "Maximum high energy battery cell temperature";
+CM_ SG_ 50 TCellBattEgyHiMax_1_2_1 "Maximum high energy battery cell temperature";
+CM_ SG_ 50 TCellBattEgyHiMax_1_1_1 "Maximum high energy battery cell temperature";
+CM_ SG_ 49 TCellBattEgyHiMin_2_2_1 "Minimum high energy battery cell temperature";
+CM_ SG_ 49 TCellBattEgyHiMin_2_1_1 "Minimum high energy battery cell temperature";
+CM_ SG_ 49 TCellBattEgyHiMin_1_2_1 "Minimum high energy battery cell temperature";
+CM_ SG_ 49 TCellBattEgyHiMin_1_1_1 "Minimum high energy battery cell temperature";
+CM_ SG_ 48 TCellBattPwrHiMax_2_1_2 "Maximum high power battery cell temperature";
+CM_ SG_ 48 TCellBattPwrHiMax_2_1_1 "Maximum high power battery cell temperature";
+CM_ SG_ 48 TCellBattPwrHiMax_1_1_2 "Maximum high power battery cell temperature";
+CM_ SG_ 48 TCellBattPwrHiMax_1_1_1 "Maximum high power battery cell temperature";
+CM_ SG_ 47 TCellBattPwrHiMin_2_1_2 "Minimum high power battery cell temperature";
+CM_ SG_ 47 TCellBattPwrHiMin_2_1_1 "Minimum high power battery cell temperature";
+CM_ SG_ 47 TCellBattPwrHiMin_1_1_2 "Minimum high power battery cell temperature";
+CM_ SG_ 47 TCellBattPwrHiMin_1_1_1 "Minimum high power battery cell temperature";
+CM_ SG_ 38 StOperDcdcPacBattHyb_1 "Hybrid battery pack DCDC converter operation state";
+CM_ SG_ 38 StOperDcdcPacBattHyb_0 "Hybrid battery pack DCDC converter operation state";
+CM_ SG_ 73 StTme "Status of TMC after evaluating all connected components";
+CM_ SG_ 73 StTmeErr "Error of TMC after evaluating error messages of all connected components";
+CM_ SG_ 72 TCoolBattPac8 "Coolant temperature 8 in battery circuit";
+CM_ SG_ 71 TCoolBattPac7 "Coolant temperature 7 in battery circuit";
+CM_ SG_ 70 TCoolBattPac6 "Coolant temperature 6 in battery circuit";
+CM_ SG_ 69 TCoolBattPac5 "Coolant temperature 5 in battery circuit";
+CM_ SG_ 68 TCoolBattPac4 "Coolant temperature 4 in battery circuit";
+CM_ SG_ 67 TCoolBattPac3 "Coolant temperature 3 in battery circuit";
+CM_ SG_ 66 TCoolBattPac2 "Coolant temperature 2 in battery circuit";
+CM_ SG_ 65 TCoolBattPac1 "Coolant temperature 1 in battery circuit";
+CM_ SG_ 64 TAirAmb "Air ambient temperature";
+CM_ SG_ 1654 VERSION_MINOR_8 "MSU SW Version";
+CM_ SG_ 1654 VERSION_MAJOR_8 "MSU SW Version";
+CM_ SG_ 1638 VERSION_MINOR_7 "MSU SW Version";
+CM_ SG_ 1638 VERSION_MAJOR_7 "MSU SW Version";
+CM_ SG_ 1606 VERSION_MINOR_5 "MSU SW Version";
+CM_ SG_ 1606 VERSION_MAJOR_5 "MSU SW Version";
+CM_ SG_ 1590 VERSION_MINOR_4 "MSU SW Version";
+CM_ SG_ 1590 VERSION_MAJOR_4 "MSU SW Version";
+CM_ SG_ 1622 VERSION_MINOR_6 "MSU SW Version";
+CM_ SG_ 1622 VERSION_MAJOR_6 "MSU SW Version";
+CM_ SG_ 1574 VERSION_MINOR_3 "MSU SW Version";
+CM_ SG_ 1574 VERSION_MAJOR_3 "MSU SW Version";
+CM_ SG_ 1558 VERSION_MINOR_2 "MSU SW Version";
+CM_ SG_ 1558 VERSION_MAJOR_2 "MSU SW Version";
+CM_ SG_ 1542 VERSION_MINOR_1 "MSU SW Version";
+CM_ SG_ 1542 VERSION_MAJOR_1 "MSU SW Version";
+CM_ SG_ 1653 Filter_Pressure_Diff_4_8 "Battery pack pressure gradient filter 4";
+CM_ SG_ 1653 Filter_Pressure_Diff_3_8 "Battery pack pressure gradient filter 3";
+CM_ SG_ 1653 Filter_Pressure_Diff_2_8 "Battery pack pressure gradient filter 2";
+CM_ SG_ 1653 Filter_Pressure_Diff_1_8 "Battery pack pressure gradient filter 1";
+CM_ SG_ 1653 Filter_Pressure_Abs_8 "Battery pack absolute pressure level trigger";
+CM_ SG_ 1653 Filter_H2C_Abs_8 "Battery pack hydrogen concentration trigger";
+CM_ SG_ 1653 ADC_VBAT_8 "MSU Supply voltage";
+CM_ SG_ 1653 ADC_NTC2_8 "Air temperature inside the battery pack";
+CM_ SG_ 1637 Filter_Pressure_Diff_4_7 "Battery pack pressure gradient filter 4";
+CM_ SG_ 1637 Filter_Pressure_Diff_3_7 "Battery pack pressure gradient filter 3";
+CM_ SG_ 1637 Filter_Pressure_Diff_2_7 "Battery pack pressure gradient filter 2";
+CM_ SG_ 1637 Filter_Pressure_Diff_1_7 "Battery pack pressure gradient filter 1";
+CM_ SG_ 1637 Filter_Pressure_Abs_7 "Battery pack absolute pressure level trigger";
+CM_ SG_ 1637 Filter_H2C_Abs_7 "Battery pack hydrogen concentration trigger";
+CM_ SG_ 1637 ADC_VBAT_7 "MSU Supply voltage";
+CM_ SG_ 1637 ADC_NTC2_7 "Air temperature inside the battery pack";
+CM_ SG_ 1621 Filter_Pressure_Diff_4_6 "Battery pack pressure gradient filter 4";
+CM_ SG_ 1621 Filter_Pressure_Diff_3_6 "Battery pack pressure gradient filter 3";
+CM_ SG_ 1621 Filter_Pressure_Diff_2_6 "Battery pack pressure gradient filter 2";
+CM_ SG_ 1621 Filter_Pressure_Diff_1_6 "Battery pack pressure gradient filter 1";
+CM_ SG_ 1621 Filter_Pressure_Abs_6 "Battery pack absolute pressure level trigger";
+CM_ SG_ 1621 Filter_H2C_Abs_6 "Battery pack hydrogen concentration trigger";
+CM_ SG_ 1621 ADC_VBAT_6 "MSU Supply voltage";
+CM_ SG_ 1621 ADC_NTC2_6 "Air temperature inside the battery pack";
+CM_ SG_ 1605 Filter_Pressure_Diff_4_5 "Battery pack pressure gradient filter 4";
+CM_ SG_ 1605 Filter_Pressure_Diff_3_5 "Battery pack pressure gradient filter 3";
+CM_ SG_ 1605 Filter_Pressure_Diff_2_5 "Battery pack pressure gradient filter 2";
+CM_ SG_ 1605 Filter_Pressure_Diff_1_5 "Battery pack pressure gradient filter 1";
+CM_ SG_ 1605 Filter_Pressure_Abs_5 "Battery pack absolute pressure level trigger";
+CM_ SG_ 1605 Filter_H2C_Abs_5 "Battery pack hydrogen concentration trigger";
+CM_ SG_ 1605 ADC_VBAT_5 "MSU Supply voltage";
+CM_ SG_ 1605 ADC_NTC2_5 "Air temperature inside the battery pack";
+CM_ SG_ 1589 Filter_Pressure_Diff_4_4 "Battery pack pressure gradient filter 4";
+CM_ SG_ 1589 Filter_Pressure_Diff_3_4 "Battery pack pressure gradient filter 3";
+CM_ SG_ 1589 Filter_Pressure_Diff_2_4 "Battery pack pressure gradient filter 2";
+CM_ SG_ 1589 Filter_Pressure_Diff_1_4 "Battery pack pressure gradient filter 1";
+CM_ SG_ 1589 Filter_Pressure_Abs_4 "Battery pack absolute pressure level trigger";
+CM_ SG_ 1589 Filter_H2C_Abs_4 "Battery pack hydrogen concentration trigger";
+CM_ SG_ 1589 ADC_VBAT_4 "MSU Supply voltage";
+CM_ SG_ 1589 ADC_NTC2_4 "Air temperature inside the battery pack";
+CM_ SG_ 1573 Filter_Pressure_Diff_4_3 "Battery pack pressure gradient filter 4";
+CM_ SG_ 1573 Filter_Pressure_Diff_3_3 "Battery pack pressure gradient filter 3";
+CM_ SG_ 1573 Filter_Pressure_Diff_2_3 "Battery pack pressure gradient filter 2";
+CM_ SG_ 1573 Filter_Pressure_Diff_1_3 "Battery pack pressure gradient filter 1";
+CM_ SG_ 1573 Filter_Pressure_Abs_3 "Battery pack absolute pressure level trigger";
+CM_ SG_ 1573 Filter_H2C_Abs_3 "Battery pack hydrogen concentration trigger";
+CM_ SG_ 1573 ADC_VBAT_3 "MSU Supply voltage";
+CM_ SG_ 1573 ADC_NTC2_3 "Air temperature inside the battery pack";
+CM_ SG_ 1557 Filter_Pressure_Diff_4_2 "Battery pack pressure gradient filter 4";
+CM_ SG_ 1557 Filter_Pressure_Diff_3_2 "Battery pack pressure gradient filter 3";
+CM_ SG_ 1557 Filter_Pressure_Diff_2_2 "Battery pack pressure gradient filter 2";
+CM_ SG_ 1557 Filter_Pressure_Diff_1_2 "Battery pack pressure gradient filter 1";
+CM_ SG_ 1557 Filter_Pressure_Abs_2 "Battery pack absolute pressure level trigger";
+CM_ SG_ 1557 Filter_H2C_Abs_2 "Battery pack hydrogen concentration trigger";
+CM_ SG_ 1557 ADC_VBAT_2 "MSU Supply voltage";
+CM_ SG_ 1557 ADC_NTC2_2 "Air temperature inside the battery pack";
+CM_ SG_ 1541 ADC_VBAT_1 "MSU Supply voltage";
+CM_ SG_ 1541 Filter_H2C_Abs_1 "Battery pack hydrogen concentration trigger";
+CM_ SG_ 1541 Filter_Pressure_Abs_1 "Battery pack absolute pressure level trigger";
+CM_ SG_ 1541 Filter_Pressure_Diff_4_1 "Battery pack pressure gradient filter 4";
+CM_ SG_ 1541 Filter_Pressure_Diff_3_1 "Battery pack pressure gradient filter 3";
+CM_ SG_ 1541 Filter_Pressure_Diff_2_1 "Battery pack pressure gradient filter 2";
+CM_ SG_ 1541 Filter_Pressure_Diff_1_1 "Battery pack pressure gradient filter 1";
+CM_ SG_ 1541 ADC_NTC2_1 "Air temperature inside the battery pack";
+CM_ SG_ 1652 KP466_Status_8 "Battery pack pressure sensor status";
+CM_ SG_ 1652 KP466_Pressure_8 "Pressure inside the battery pack";
+CM_ SG_ 1636 KP466_Status_7 "Battery pack pressure sensor status";
+CM_ SG_ 1636 KP466_Pressure_7 "Pressure inside the battery pack";
+CM_ SG_ 1620 KP466_Status_6 "Battery pack pressure sensor status";
+CM_ SG_ 1620 KP466_Pressure_6 "Pressure inside the battery pack";
+CM_ SG_ 1604 KP466_Status_5 "Battery pack pressure sensor status";
+CM_ SG_ 1604 KP466_Pressure_5 "Pressure inside the battery pack";
+CM_ SG_ 1588 KP466_Status_4 "Battery pack pressure sensor status";
+CM_ SG_ 1588 KP466_Pressure_4 "Pressure inside the battery pack";
+CM_ SG_ 1572 KP466_Status_3 "Battery pack pressure sensor status";
+CM_ SG_ 1572 KP466_Pressure_3 "Pressure inside the battery pack";
+CM_ SG_ 1556 KP466_Status_2 "Battery pack pressure sensor status";
+CM_ SG_ 1556 KP466_Pressure_2 "Pressure inside the battery pack";
+CM_ SG_ 1540 KP466_Pressure_1 "Pressure inside the battery pack";
+CM_ SG_ 1540 KP466_Status_1 "Battery pack pressure sensor status";
+CM_ SG_ 1650 SHT_Status_8 "Battery pack humidity sensor status";
+CM_ SG_ 1650 SHT_Humidity_8 "Relative humidity inside the battery pack";
+CM_ SG_ 1634 SHT_Status_7 "Battery pack humidity sensor status";
+CM_ SG_ 1634 SHT_Humidity_7 "Relative humidity inside the battery pack";
+CM_ SG_ 1618 SHT_Status_6 "Battery pack humidity sensor status";
+CM_ SG_ 1618 SHT_Humidity_6 "Relative humidity inside the battery pack";
+CM_ SG_ 1602 SHT_Status_5 "Battery pack humidity sensor status";
+CM_ SG_ 1602 SHT_Humidity_5 "Relative humidity inside the battery pack";
+CM_ SG_ 1586 SHT_Status_4 "Battery pack humidity sensor status";
+CM_ SG_ 1586 SHT_Humidity_4 "Relative humidity inside the battery pack";
+CM_ SG_ 1570 SHT_Status_3 "Battery pack humidity sensor status";
+CM_ SG_ 1570 SHT_Humidity_3 "Relative humidity inside the battery pack";
+CM_ SG_ 1554 SHT_Status_2 "Battery pack humidity sensor status";
+CM_ SG_ 1554 SHT_Humidity_2 "Relative humidity inside the battery pack";
+CM_ SG_ 1538 SHT_Status_1 "Battery pack humidity sensor status";
+CM_ SG_ 1538 SHT_Humidity_1 "Relative humidity inside the battery pack";
+CM_ SG_ 1649 SHT_Temperature_8 "Humidity sensor temperature inside the battery pack";
+CM_ SG_ 1633 SHT_Temperature_7 "Humidity sensor temperature inside the battery pack";
+CM_ SG_ 1617 SHT_Temperature_6 "Humidity sensor temperature inside the battery pack";
+CM_ SG_ 1601 SHT_Temperature_5 "Humidity sensor temperature inside the battery pack";
+CM_ SG_ 1585 SHT_Temperature_4 "Humidity sensor temperature inside the battery pack";
+CM_ SG_ 1569 SHT_Temperature_3 "Humidity sensor temperature inside the battery pack";
+CM_ SG_ 1553 SHT_Temperature_2 "Humidity sensor temperature inside the battery pack";
+CM_ SG_ 1537 SHT_Temperature_1 "Humidity sensor temperature inside the battery pack";
+CM_ SG_ 1648 H2CS_H2C_8 "H2 Concentration inside the battery pack
+";
+CM_ SG_ 1632 H2CS_H2C_7 "H2 Concentration inside the battery pack
+";
+CM_ SG_ 1616 H2CS_H2C_6 "H2 Concentration inside the battery pack
+";
+CM_ SG_ 1600 H2CS_H2C_5 "H2 Concentration inside the battery pack
+";
+CM_ SG_ 1584 H2CS_H2C_4 "H2 Concentration inside the battery pack
+";
+CM_ SG_ 1568 H2CS_H2C_3 "H2 Concentration inside the battery pack
+";
+CM_ SG_ 1552 H2CS_H2C_2 "H2 Concentration inside the battery pack
+";
+CM_ SG_ 1536 H2CS_H2C_1 "H2 Concentration inside the battery pack
+";
+CM_ SG_ 256 CAN_Enable "Enable CAN data communication of the battery pack sensors
+(0 - CAN Off / 1-255 - CAN enable)";
+CM_ SG_ 37 Fault_Reset "Fault reset received from vehicle controller
+0 - NOT ACTIVE
+1 - ACTIVE
+2 - ERROR
+3 - NOT AVAILABLE";
+CM_ SG_ 37 Emergency_Stop "Emergency stop received from the vehicle controller
+0 - NOT ACTIVE
+1 - ACTIVE
+2 - ERROR
+3 - NOT AVAILABLE
+";
+CM_ SG_ 37 Vehicle_Mode "Vehicle state
+0 - Vehicle Not Active
+1 - Vehicle Active
+2 - Charging Mod
+3 -  Driving Mod
+4- Reserve
+5- Reserve
+6- Error
+7- Not Available";
+CM_ SG_ 37 Vehicle_Speed "Vehicle speed
+0-250 : Vehicle speed
+254 : Error
+255 : Not Available";
+CM_ SG_ 36 LvWarnDcdcBattHyb_1 "Hybrid battery DCDC converter warning";
+CM_ SG_ 36 LvWarnDcdcBattHyb_0 "Hybrid battery DCDC converter warning";
+CM_ SG_ 36 LvErrDcdcBattHyb_1 "Hybrid battery DCDC converter error";
+CM_ SG_ 36 LvErrDcdcBattHyb_0 "Hybrid battery DCDC converter error";
+CM_ SG_ 36 LfWarnDcdcBattHyb_1 "Hybrid battery DCDC converter warning indication";
+CM_ SG_ 36 LfWarnDcdcBattHyb_0 "Hybrid battery DCDC converter warning indication";
+CM_ SG_ 36 LfErrDcdcBattHyb_1 "Hybrid battery DCDC converter error indication";
+CM_ SG_ 36 LfErrDcdcBattHyb_0 "Hybrid battery DCDC converter error indication";
+CM_ SG_ 35 TMesDcdcBattHyb_1 "Measured hybrid battery DCDC converter temperature";
+CM_ SG_ 35 TMesDcdcBattHyb_0 "Measured hybrid battery DCDC converter temperature";
+CM_ SG_ 34 Minute "Clock minutes";
+CM_ SG_ 34 Hour "Clock Hours";
+CM_ SG_ 34 Day "Clock date";
+CM_ SG_ 34 Month "Clock month";
+CM_ SG_ 34 Year "Clock year";
+CM_ SG_ 33 Charging_Time_Hours "Time elapsed in hours since battery charging start received from the vehicle
+0-250: Available
+254: Error
+255: Not Available";
+CM_ SG_ 33 Charging_Time_Minutes "Time elapsed in minutes since battery charging start received from the vehicle
+0-59: Available
+254: Error
+255: Not Available";
+CM_ SG_ 33 Battery_Cooling_Active "Battery cooling state
+0 - OPEN
+1 - CLOSED
+2 - ERROR
+3 - NOT AVAILABLE";
+CM_ SG_ 33 ECU_Ready "Vehicle controller operation state
+0 - OPEN
+1 - CLOSED
+2 - ERROR
+3 - NOT AVAILABLE";
+CM_ SG_ 33 HV_ON "High voltage system status revceived from the vehicle controller
+0 - OPEN
+1 - CLOSED
+2 - ERROR
+3 - NOT AVAILABLE";
+CM_ SG_ 33 Precharge_Contactor_Status "Precharge status received from the vehicle controller
+0 - OPEN
+1 - CLOSED
+2 - ERROR
+3 - NOT AVAILABLE";
+CM_ SG_ 33 Main_Minus_Contactor_Status "Negative contactor status
+
+0 - OPEN
+1 - CLOSED
+2 - ERROR
+3 - NOT AVAILABLE";
+CM_ SG_ 33 Main_Plus_Contactor_Status "Positive contactor status
+
+0 - OPEN
+1 - CLOSED
+2 - ERROR
+3 - NOT AVAILABLE";
+CM_ SG_ 32 UBattEgyHiDcdc_0 "High energy battery pack voltage at the DCDC converter";
+CM_ SG_ 32 UBattEgyHiDcdc_1 "High energy battery pack voltage at the DCDC converter";
+CM_ SG_ 31 UBattPwrHiDcdc_1 "High power battery pack voltage at the DCDC converter";
+CM_ SG_ 31 UBattPwrHiDcdc_0 "High power battery pack voltage at the DCDC converter";
+CM_ SG_ 30 IBattEgyHiDcdc_1 "High energy battery pack current at the DCDC converter";
+CM_ SG_ 30 IBattEgyHiDcdc_0 "High energy battery pack current at the DCDC converter";
+CM_ SG_ 29 IBattPwrHiDcdc_1 "High power battery pack current at the DCDC converter";
+CM_ SG_ 29 IBattPwrHiDcdc_0 "High power battery pack current at the DCDC converter";
+CM_ SG_ 28 NrCycChaDchaBattTot "Total battery charing/discharging cycle number";
+CM_ SG_ 27 StActOperDcdcPacBattHybReq_1 "Requested battery pack DCDC converter activation mode";
+CM_ SG_ 27 StActOperDcdcPacBattHybReq_0 "Requested battery pack DCDC converter activation mode";
+CM_ SG_ 27 StOperDcdcPacBattHybReq_1 "Requested battery pack DCDC converter operation mode";
+CM_ SG_ 27 StOperDcdcPacBattHybReq_0 "Requested battery pack DCDC converter operation mode";
+CM_ SG_ 27 TiEgyTrfDcdcBattHy_1 "Energy transfer time of the hybrid battery DCDC converter ";
+CM_ SG_ 27 TiEgyTrfDcdcBattHy_0 "Energy transfer time of the hybrid battery DCDC converter ";
+CM_ SG_ 26 EgyDcdcPacBattHybRSp_1 "High voltage system battery pack DCDC converter energy setpoint.";
+CM_ SG_ 26 EgyDcdcPacBattHybRSp_0 "High voltage system battery pack DCDC converter energy setpoint.";
+CM_ SG_ 26 PwrDcdcPacBattHybSp_1 "High voltage system battery pack DCDC converter power setpoint";
+CM_ SG_ 26 PwrDcdcPacBattHybSp_0 "High voltage system battery pack DCDC converter power setpoint";
+CM_ SG_ 25 BMS_Conf_Type "System Configuration
+0 - Default
+1- Bus
+2- LEV
+3- VT Internal
+";
+CM_ SG_ 25 Isolation_Monitor_Status "Battery pack isolation measurement status comunicated to the vehicle
+0 - No Isolation Error
+1 - Active Isolation Error
+2 - Error
+3 - Not Available";
+CM_ SG_ 25 Interlock_Status "Symptom of open interlock loop connection diagnosis
+0 - NOT ACTIVE
+1 - ACTIVE
+2 - ERROR
+3 - NOT AVAILABLE";
+CM_ SG_ 25 Battery_State "Battery pack status";
+CM_ SG_ 25 Battery_Failure "Diagnostic result from battery management system to tool lower 32 bit";
+CM_ SG_ 24 IHvsBattSensSfty "High voltage battery sensor current for safety";
+CM_ SG_ 24 UHvsLinkSfty "High voltage system link voltage for safety";
+CM_ SG_ 23 PwrDchaBattPacLim "Limit of the battery pack discharging power";
+CM_ SG_ 23 PwrChaBattPacLim "Limit of the battery pack charging power";
+CM_ SG_ 22 UCellBattPwrHiMax "Maximum high power battery cell voltage
+";
+CM_ SG_ 22 UCellBattPwrHiMin "Minimum high power battery cell voltage
+";
+CM_ SG_ 21 UCellBattEgyHiMax "Maximum high energy battery cell voltage
+";
+CM_ SG_ 21 UCellBattEgyHiMin "Minimum high energy battery cell voltage
+";
+CM_ SG_ 19 TCellBattPwrHiMin "Minimum high power battery cell temperature";
+CM_ SG_ 19 TCellBattPwrHiMax "Maximum high power battery cell temperature";
+CM_ SG_ 18 TCellBattEgyHiMax "Maximum high energy battery cell temperature";
+CM_ SG_ 18 TCellBattEgyHiMin "Minimum high energy battery cell temperature";
+CM_ SG_ 17 RatChaBatt "Battery state of charge";
+CM_ SG_ 17 RatCpNomBatt "Battery state of health";
+CM_ SG_ 16 CpBattPac "Battery pack actual capacity";
+CM_ SG_ 16 CpBattPacMax "Battery pack maximum capacity";
+BA_DEF_ SG_  "GenSigSendType" ENUM  "Cyclic","OnWrite","OnWriteWithRepetition","OnChange","OnChangeWithRepetition","IfActive","IfActiveWithRepetition","NoSigSendType","OnChangeAndIfActive","OnChangeAndIfActiveWithRepetition";
+BA_DEF_ BO_  "GenMsgSendType" ENUM  "Cyclic","not_used","not_used","not_used","not_used","not_used","not_used","IfActive","NoMsgSendType";
+BA_DEF_ BO_  "GenMsgCycleTime" INT 0 65535;
+BA_DEF_  "MultiplexExtEnabled" ENUM  "No","Yes";
+BA_DEF_  "BusType" STRING ;
+BA_DEF_DEF_  "GenSigSendType" "Cyclic";
+BA_DEF_DEF_  "GenMsgSendType" "Cyclic";
+BA_DEF_DEF_  "GenMsgCycleTime" 100;
+BA_DEF_DEF_  "MultiplexExtEnabled" "No";
+BA_DEF_DEF_  "BusType" "CAN";
+BA_ "GenMsgCycleTime" BO_ 46 1000;
+BA_ "GenMsgCycleTime" BO_ 45 1000;
+BA_ "GenMsgCycleTime" BO_ 44 1000;
+BA_ "GenMsgCycleTime" BO_ 43 1000;
+BA_ "GenMsgCycleTime" BO_ 42 1000;
+BA_ "GenMsgCycleTime" BO_ 41 1000;
+BA_ "GenMsgCycleTime" BO_ 40 1000;
+BA_ "GenMsgCycleTime" BO_ 39 1000;
+BA_ "GenMsgCycleTime" BO_ 52 1000;
+BA_ "GenMsgCycleTime" BO_ 51 1000;
+BA_ "GenMsgCycleTime" BO_ 50 1000;
+BA_ "GenMsgCycleTime" BO_ 49 1000;
+BA_ "GenMsgCycleTime" BO_ 48 1000;
+BA_ "GenMsgCycleTime" BO_ 47 1000;
+BA_ "GenMsgCycleTime" BO_ 73 1000;
+BA_ "GenMsgCycleTime" BO_ 72 1000;
+BA_ "GenMsgCycleTime" BO_ 71 1000;
+BA_ "GenMsgCycleTime" BO_ 70 1000;
+BA_ "GenMsgCycleTime" BO_ 68 1000;
+BA_ "GenMsgCycleTime" BO_ 67 1000;
+BA_ "GenMsgCycleTime" BO_ 66 1000;
+BA_ "GenMsgCycleTime" BO_ 65 1000;
+BA_ "GenMsgCycleTime" BO_ 256 0;
+BA_ "GenMsgSendType" BO_ 256 8;
+BA_ "GenMsgCycleTime" BO_ 28 1000;
+BA_ "GenMsgCycleTime" BO_ 19 1000;
+BA_ "GenMsgCycleTime" BO_ 18 1000;
+BA_ "GenMsgCycleTime" BO_ 17 1000;
+BA_ "GenMsgCycleTime" BO_ 16 1000;
+BA_ "GenSigSendType" SG_ 256 CAN_Enable 3;
+
