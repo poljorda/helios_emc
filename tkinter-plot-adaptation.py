@@ -1,5 +1,5 @@
 import tkinter as tk  # Assuming SensorMonitorApp might pass tk.Tk for status updates
-from tkinter import ttk
+from tkinter import ttk, filedialog, messagebox, simpledialog # Added filedialog, messagebox, simpledialog
 import numpy as np
 import threading
 import time
@@ -38,6 +38,9 @@ IS_VIRTUAL = False  # Set True for testing with simulator
 # CAN FD Bit Timing (Must match monitor and simulator)
 ARBITRATION_BITRATE = 1000000
 DATA_BITRATE = 4000000
+
+# Logging Path
+LOGGING_BASE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "evidences")
 
 
 class CanReaderThread(threading.Thread):
@@ -597,11 +600,22 @@ class SensorMonitorApp:
     toggle_acquisition_button: ttk.Button
     is_acquiring: bool # To store acquisition status
 
+    # Logging related attributes
+    toggle_logging_button: ttk.Button
+    is_logging: bool
+    logging_status_label: ttk.Label
+    current_log_folder: Optional[str]
+
+
     def __init__(self, root: tk.Tk) -> None:
         self.root = root
         self.root.title("HELIOS BMS Monitor")
         self.root.state("zoomed")  # Set a default size for the window
         self.root.minsize(1200, 700)  # Adjusted minsize if needed
+
+        self.is_acquiring = False  # Initial state: not acquiring
+        self.is_logging = False   # Initial state: not logging
+        self.current_log_folder = None
 
         # Configure the root window
         self.root.columnconfigure(0, weight=1)
@@ -612,7 +626,7 @@ class SensorMonitorApp:
 
         # Create sensor data buffer (already configured for 5 modules)
         # Buffer size might need adjustment based on expected data rate / desired history
-        self.sensor_buffer = ModularSensorBuffer(buffer_size=600)  # Increased buffer size example
+        self.sensor_buffer = ModularSensorBuffer(buffer_size=600)  # 600 for 10 minutes approx of data
 
         # --- Status Bar (Added for CAN status) ---
         self.status_frame = ttk.Frame(self.root)
@@ -634,13 +648,11 @@ class SensorMonitorApp:
         # --- Style Configuration ---
         style = ttk.Style()
         
-        # Configure styles to remove focus ring and set text color
+        # Configure styles to remove focus ring and set text color for Acquisition Button
         style.configure("RedText.TButton", 
                         foreground="red", 
                         focusthickness=0, 
                         highlightthickness=0)
-        # Ensure the focus settings apply by mapping them to an empty value for the 'focus' state
-        # This tells ttk to not change these properties on focus.
         style.map("RedText.TButton",
                   focusthickness=[('focus', 0)],
                   highlightthickness=[('focus', 0)])
@@ -653,19 +665,46 @@ class SensorMonitorApp:
                   focusthickness=[('focus', 0)],
                   highlightthickness=[('focus', 0)])
 
+        # Configure styles for Logging Button
+        style.configure("Logging.TButton",
+                        foreground="blue",
+                        focusthickness=0,
+                        highlightthickness=0)
+        style.map("Logging.TButton",
+                  focusthickness=[('focus', 0)],
+                  highlightthickness=[('focus', 0)])
+        
+        style.configure("NotLogging.TButton",
+                        foreground="black", # Or your default button text color
+                        focusthickness=0,
+                        highlightthickness=0)
+        style.map("NotLogging.TButton",
+                  focusthickness=[('focus', 0)],
+                  highlightthickness=[('focus', 0)])
+
 
         # --- Acquisition Control Buttons ---
         self.acquisition_controls_frame = ttk.Frame(self.root)
         self.acquisition_controls_frame.grid(row=0, column=0, sticky="ew", padx=10, pady=(5,0))
 
-        self.is_acquiring = False  # Initial state: not acquiring
 
         self.toggle_acquisition_button = ttk.Button(
             self.acquisition_controls_frame, text="Start Acquisition", command=self.toggle_acquisition
         )
-        self.toggle_acquisition_button.pack(side=tk.RIGHT, padx=5)
-        # Set initial style for the button
+        self.toggle_acquisition_button.pack(side=tk.LEFT, padx=5)
+        
+        self.toggle_logging_button = ttk.Button(
+            self.acquisition_controls_frame, text="Start Logging", command=self.toggle_logging
+        )
+        self.toggle_logging_button.pack(side=tk.LEFT, padx=5)
+
+        self.logging_status_label = ttk.Label(self.acquisition_controls_frame, text="Status")
+        self.logging_status_label.pack(side=tk.LEFT, padx=10)
+        
+        # Set initial style for the buttons and status
         self._update_acquisition_button_style()
+        self._update_logging_controls()
+
 
         # --- Notebook Setup (Remains similar) ---
         self.notebook = ttk.Notebook(self.root)
@@ -699,9 +738,29 @@ class SensorMonitorApp:
         else:
             self.toggle_acquisition_button.config(text="Start Acquisition", style="GreenText.TButton")
 
+    def _update_logging_controls(self) -> None:
+        """Updates logging button style, enabled state, and status label."""
+        if self.is_logging:
+            self.logging_status_label.config(text="Logging")
+            self.toggle_logging_button.config(text="Stop Logging", style="Logging.TButton")
+        elif self.is_acquiring:
+            self.logging_status_label.config(text="Acquiring")
+            self.toggle_logging_button.config(text="Start Logging", style="NotLogging.TButton")
+        else:
+            self.logging_status_label.config(text="Acquisition Stopped")
+            self.toggle_logging_button.config(text="Start Logging", style="NotLogging.TButton")
+
+        if self.is_acquiring:
+            self.toggle_logging_button.config(state=tk.NORMAL)
+        else:
+            self.toggle_logging_button.config(state=tk.DISABLED)
+
+
     def toggle_acquisition(self) -> None:
         """Toggles CAN data acquisition on or off."""
+        was_acquiring = self.is_acquiring
         self.is_acquiring = not self.is_acquiring
+
         if self.vehicle_can_comm:
             self.vehicle_can_comm.vehicle_status.set(self.is_acquiring)
             if self.is_acquiring:
@@ -710,12 +769,144 @@ class SensorMonitorApp:
             else:
                 self.update_status_bar("CAN Acquisition Stopped.", False)
                 print("CAN Acquisition Stopped.")
+                if was_acquiring and self.is_logging: # Was acquiring, now stopping, and was logging
+                    self._handle_stop_acquisition_while_logging()
+        
         self._update_acquisition_button_style()
+        self._update_logging_controls() # Update logging button state and status label
         # Shift focus away from the button to prevent lingering focus highlight
         self.root.focus_set()
 
+    def _start_logging_action(self, folder_path: str) -> None:
+        """Placeholder for actual start logging operations."""
+        self.current_log_folder = folder_path 
+        print(f"Start logging action triggered. Logging to: {self.current_log_folder}")
+        # TODO: Implement actual logging start (e.g., open files, start writing data)
+
+    def _stop_logging_action(self, folder_path: str) -> None:
+        """Placeholder for actual stop logging operations. Creates a dummy file."""
+        if not os.path.exists(folder_path):
+            os.makedirs(folder_path, exist_ok=True)
+        
+        dummy_file_path = os.path.join(folder_path, "log_summary.txt")
+        try:
+            with open(dummy_file_path, "w") as f:
+                f.write(f"Log stopped at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+                f.write("This is a dummy log file.\n")
+            print(f"Stop logging action: Dummy log file created at {dummy_file_path}")
+        except IOError as e:
+            print(f"Error creating dummy log file: {e}")
+            messagebox.showerror("Logging Error", f"Could not write log file to {dummy_file_path}:\n{e}")
+        self.current_log_folder = None
+
+    def _prompt_and_save_log(self) -> bool:
+        """Prompts user for log folder path using a file dialog, saves log, and updates state.
+        Returns True if logging is stopped (saved or discarded), False if logging continues.
+        """
+        # Ensure LOGGING_BASE_PATH exists, create if not
+        if not os.path.exists(LOGGING_BASE_PATH):
+            try:
+                os.makedirs(LOGGING_BASE_PATH, exist_ok=True)
+            except OSError as e:
+                messagebox.showerror("Error", f"Could not create base logging directory {LOGGING_BASE_PATH}: {e}", parent=self.root)
+                return False # Indicate failure, logging continues
+
+        timestamp_prefix = datetime.now().strftime("%Y-%m-%d_%H%M%S-")
+        
+        # asksaveasfilename will return the full path chosen by the user.
+        # We treat this path as the name of the folder to be created.
+        full_log_path = filedialog.asksaveasfilename(
+            title="Save Log Folder As",
+            initialdir=LOGGING_BASE_PATH,
+            initialfile=timestamp_prefix + "-", # Suggest a name
+            defaultextension="", # No specific extension for a folder
+            parent=self.root
+        )
+
+        if full_log_path: # User selected a path and filename (which we use as folder name)
+            try:
+                # full_log_path is the path to the folder we want to create
+                os.makedirs(full_log_path, exist_ok=True) 
+                self._stop_logging_action(full_log_path)
+                self.is_logging = False
+                messagebox.showinfo("Log Saved", f"Log saved to: {full_log_path}", parent=self.root)
+                return True # Logging stopped
+            except OSError as e:
+                messagebox.showerror("Error", f"Could not create log directory {full_log_path}: {e}", parent=self.root)
+                return False # Indicate failure, logging continues
+        else: # User cancelled the dialog
+            if messagebox.askyesno("Discard Log?", 
+                                   "Save operation cancelled. Do you want to discard the current log?\n"
+                                   "(Choosing 'No' will continue logging)",
+                                   parent=self.root):
+                print("Logging discarded by user (cancelled save dialog).")
+                self._stop_logging_action(self.current_log_folder if self.current_log_folder else "discarded_log_temp") 
+                self.is_logging = False
+                return True # Logging stopped (discarded)
+            else:
+                print("User chose to continue logging after cancelling save dialog.")
+                return False # Logging continues
+    
+    def _handle_stop_acquisition_while_logging(self) -> None:
+        """Handles the scenario when acquisition is stopped while logging is active."""
+        if messagebox.askyesno("Save Log?", 
+                               "Acquisition has been stopped. Do you want to save the current log?\n"
+                               "(Choosing 'No' will discard it)",
+                               parent=self.root):
+            self._prompt_and_save_log() # This will update is_logging
+        else:
+            print("Log discarded as acquisition stopped.")
+            if self.current_log_folder: # If there was an active log folder being written to
+                 self._stop_logging_action(self.current_log_folder) # Perform cleanup if any
+            self.is_logging = False
+        # _update_logging_controls() will be called by toggle_acquisition
+
+    def toggle_logging(self) -> None:
+        """Toggles data logging on or off."""
+        if not self.is_acquiring:
+            messagebox.showwarning("Logging Disabled", "Cannot start logging when acquisition is stopped.", parent=self.root)
+            return
+
+        if not self.is_logging: # Start logging
+            # For starting, we need a temporary folder or decide how to handle this.
+            # Let's create a temporary unique name for now, actual saving happens on stop.
+            # Or, better, defer folder creation until stop_logging or prompt_and_save_log
+            # For now, _start_logging_action is a placeholder.
+            # We can pass a conceptual "session_id" or similar if needed later.
+            # For this iteration, let's assume _start_logging_action prepares for logging.
+            # The actual folder is determined when stopping.
+            
+            # Let's define a temporary log path for the active session
+            # This path might not be created until the first data is written or when stopped.
+            temp_session_name = f"active_log_{datetime.now().strftime('%Y%m%d%H%M%S')}"
+            self.current_log_folder = os.path.join(LOGGING_BASE_PATH, temp_session_name) # Conceptual path
+            
+            self._start_logging_action(self.current_log_folder) # Pass the conceptual path
+            self.is_logging = True
+        else: # Stop logging
+            self._prompt_and_save_log()
+            # is_logging is handled by _prompt_and_save_log
+
+        self._update_logging_controls()
+        self.root.focus_set()
+
+
     def on_close(self) -> None:
         """Handle application close."""
+        if self.is_logging:
+            if messagebox.askyesno("Logging Active", 
+                                   "Logging is currently active. Do you want to save the log before closing?\n"
+                                   "(Choosing 'No' will discard the log)", 
+                                   parent=self.root):
+                if not self._prompt_and_save_log(): # If save was cancelled and user chose to continue logging
+                    messagebox.showwarning("Close Cancelled", "Application close cancelled to continue logging.", parent=self.root)
+                    return # Do not close
+            else: # Discard log
+                print("Log discarded on application close.")
+                if self.current_log_folder:
+                    self._stop_logging_action(self.current_log_folder) # Cleanup
+                self.is_logging = False
+
         print("Closing application...")
         # Stop the plot tab updates first (if it has its own thread/timers)
         if hasattr(self, "plot_tab"):
