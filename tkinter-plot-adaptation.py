@@ -17,6 +17,7 @@ import can
 import cantools
 import re
 import os
+import shutil
 import sys  # Optional: for error handling during DBC/CAN init
 
 # Type hinting imports
@@ -27,6 +28,9 @@ from sensor_data_structure import ModularSensorBuffer
 
 # Import vehicle CAN Communication library
 from vehicle_can_communication import VehicleCanCommsThread, SharedValue
+
+# Import the logging manager
+from logging_manager import LoggingManager, LoggingCanMessageObserver
 
 # --- Constants (Adapt from can_monitor_app.py and can_simulator.py) ---
 DBC_FILE_PATH = r"resources\IOT_CAN_v4.0.dbc"  # Make sure this path is correct
@@ -47,17 +51,21 @@ class CanReaderThread(threading.Thread):
     """Reads CAN messages, decodes them, and updates the sensor buffer."""
 
     def __init__(
-        self, sensor_buffer: ModularSensorBuffer, status_callback: Optional[Callable[[str, bool], None]] = None
+        self, sensor_buffer: ModularSensorBuffer, 
+        status_callback: Optional[Callable[[str, bool], None]] = None
     ):
         super().__init__()
         self.sensor_buffer: ModularSensorBuffer = sensor_buffer
         self.status_callback: Optional[Callable[[str, bool], None]] = status_callback
         self.running: bool = False
         self.db: Optional[cantools.db.Database] = None  # type: ignore
-        self.bus: Optional[can.BusABC] = (
-            None  # More specific type like can.interfaces.kvaser.KvaserBus could be used if only kvaser
-        )
+        self.bus: Optional[can.BusABC] = None
         self.daemon: bool = True
+        self.logging_observer: Optional[LoggingCanMessageObserver] = None
+        
+    def set_logging_observer(self, observer: Optional[LoggingCanMessageObserver]) -> None:
+        """Set or clear the logging observer."""
+        self.logging_observer = observer
 
     def _update_status(self, message: str, is_error: bool = False) -> None:
         """Safely updates the status bar via callback."""
@@ -115,6 +123,10 @@ class CanReaderThread(threading.Thread):
                 timing=bit_timing_fd,
                 is_virtual=IS_VIRTUAL,
             )
+            
+            # Remove the references to self.logging_manager and can_listener
+            # We'll handle logging through the logging_observer attribute
+                
             self._update_status(
                 f"Connected to {KVASER_INTERFACE} channel {KVASER_CHANNEL} (FD Mode {'Virtual' if IS_VIRTUAL else ''}). Monitoring started."
             )
@@ -170,6 +182,10 @@ class CanReaderThread(threading.Thread):
             try:
                 msg: Optional[can.Message] = self.bus.recv(timeout=1.0)
                 if msg and self.db:  # Ensure self.db is not None
+                    # Log the raw CAN message first if logging is enabled
+                    if self.logging_observer:
+                        self.logging_observer.log_message(msg)
+                        
                     try:
                         # cantools expects data to be bytes or bytearray
                         decoded_signals: Dict[str, Any] = self.db.decode_message(msg.arbitration_id, bytes(msg.data))
@@ -191,10 +207,20 @@ class CanReaderThread(threading.Thread):
                                             self.sensor_buffer.update_voltage(
                                                 module_id, cell_id, timestamp_ms, numeric_value
                                             )
+                                            # Log voltage data if logging is enabled
+                                            if self.logging_observer and isinstance(self.logging_observer.logging_manager, LoggingManager):
+                                                self.logging_observer.logging_manager.log_voltage(
+                                                    module_id, cell_id, timestamp_ms, numeric_value
+                                                )
                                         elif data_type == "temperature":
                                             self.sensor_buffer.update_temperature(
                                                 module_id, cell_id, timestamp_ms, numeric_value
                                             )
+                                            # Log temperature data if logging is enabled
+                                            if self.logging_observer and isinstance(self.logging_observer.logging_manager, LoggingManager):
+                                                self.logging_observer.logging_manager.log_temperature(
+                                                    module_id, cell_id, timestamp_ms, numeric_value
+                                                )
                                     except (ValueError, TypeError) as e:
                                         print(
                                             f"Warning: Could not convert signal value '{value}' to float for {signal_name}: {e}"
@@ -605,6 +631,7 @@ class SensorMonitorApp:
     is_logging: bool
     logging_status_label: ttk.Label
     current_log_folder: Optional[str]
+    logging_manager: Optional[LoggingManager]
 
 
     def __init__(self, root: tk.Tk) -> None:
@@ -616,6 +643,7 @@ class SensorMonitorApp:
         self.is_acquiring = False  # Initial state: not acquiring
         self.is_logging = False   # Initial state: not logging
         self.current_log_folder = None
+        self.logging_manager = None
 
         # Configure the root window
         self.root.columnconfigure(0, weight=1)
@@ -637,7 +665,7 @@ class SensorMonitorApp:
         self.status_label.pack(fill=tk.X, expand=True)
 
         # Create and start the CAN reader thread
-        # Pass a callback to update the status bar (optional, needs careful implementation)
+        # LoggingManager will be attached later when logging starts
         self.can_reader = CanReaderThread(self.sensor_buffer, status_callback=self.update_status_bar)
         self.can_reader.start()  # Start reading CAN data
         
@@ -778,25 +806,56 @@ class SensorMonitorApp:
         self.root.focus_set()
 
     def _start_logging_action(self, folder_path: str) -> None:
-        """Placeholder for actual start logging operations."""
-        self.current_log_folder = folder_path 
-        print(f"Start logging action triggered. Logging to: {self.current_log_folder}")
-        # TODO: Implement actual logging start (e.g., open files, start writing data)
+        """Start logging operations by creating the LoggingManager and attaching an observer to the CAN reader."""
+        
+        # Create the logging manager
+        self.logging_manager = LoggingManager(
+            num_voltage_modules=self.sensor_buffer.num_voltage_modules,
+            num_voltage_cells=self.sensor_buffer.num_voltage_cells,
+            num_temp_modules=self.sensor_buffer.num_temp_modules,
+            num_temp_cells=self.sensor_buffer.num_temp_cells
+        )
+        
+        # Start the logging manager
+        if self.logging_manager.start_logging():
+            self.current_log_folder = folder_path
+            print(f"Start logging action triggered. Logging to: {self.current_log_folder}")
+            
+            # Create an observer and attach it to the CAN reader to log messages
+            observer = LoggingCanMessageObserver(self.logging_manager)
+            self.can_reader.set_logging_observer(observer)
+            
+            self.update_status_bar("Logging started", False)
+        else:
+            # Logging failed to start
+            self.update_status_bar("Failed to start logging", True)
+            messagebox.showerror("Logging Error", "Failed to start logging", parent=self.root)
+            self.logging_manager = None
 
     def _stop_logging_action(self, folder_path: str) -> None:
-        """Placeholder for actual stop logging operations. Creates a dummy file."""
-        if not os.path.exists(folder_path):
-            os.makedirs(folder_path, exist_ok=True)
-        
-        dummy_file_path = os.path.join(folder_path, "log_summary.txt")
-        try:
-            with open(dummy_file_path, "w") as f:
-                f.write(f"Log stopped at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-                f.write("This is a dummy log file.\n")
-            print(f"Stop logging action: Dummy log file created at {dummy_file_path}")
-        except IOError as e:
-            print(f"Error creating dummy log file: {e}")
-            messagebox.showerror("Logging Error", f"Could not write log file to {dummy_file_path}:\n{e}")
+        """Stop logging operations."""
+        if self.logging_manager:
+            # Remove the logging observer from the CAN reader
+            self.can_reader.set_logging_observer(None)
+            
+            # Stop the logging manager and get the temp directory path
+            temp_dir = self.logging_manager.stop_logging()
+            
+            try:
+                # Move logs to the destination folder
+                if self.logging_manager.move_logs_to_destination(folder_path):
+                    print(f"Logs successfully moved to: {folder_path}")
+                else:
+                    print(f"Failed to move logs to: {folder_path}")
+                    messagebox.showerror("Logging Error", f"Failed to move logs to: {folder_path}", parent=self.root)
+            except Exception as e:
+                print(f"Error during log file moving: {e}")
+                messagebox.showerror("Logging Error", f"Error moving log files: {e}", parent=self.root)
+            
+            # Cleanup
+            self.logging_manager.cleanup()
+            self.logging_manager = None
+            
         self.current_log_folder = None
 
     def _prompt_and_save_log(self) -> bool:
@@ -811,14 +870,14 @@ class SensorMonitorApp:
                 messagebox.showerror("Error", f"Could not create base logging directory {LOGGING_BASE_PATH}: {e}", parent=self.root)
                 return False # Indicate failure, logging continues
 
-        timestamp_prefix = datetime.now().strftime("%Y-%m-%d_%H%M%S-")
+        timestamp_prefix = datetime.now().strftime("%Y-%m-%d_%H%M%S")
         
         # asksaveasfilename will return the full path chosen by the user.
         # We treat this path as the name of the folder to be created.
         full_log_path = filedialog.asksaveasfilename(
             title="Save Log Folder As",
             initialdir=LOGGING_BASE_PATH,
-            initialfile=timestamp_prefix + "-", # Suggest a name
+            initialfile=timestamp_prefix,
             defaultextension="", # No specific extension for a folder
             parent=self.root
         )
@@ -840,7 +899,23 @@ class SensorMonitorApp:
                                    "(Choosing 'No' will continue logging)",
                                    parent=self.root):
                 print("Logging discarded by user (cancelled save dialog).")
-                self._stop_logging_action(self.current_log_folder if self.current_log_folder else "discarded_log_temp") 
+                if self.logging_manager:
+                    temp_dir = self.logging_manager.stop_logging()
+                    self.logging_manager.cleanup()
+                    self.logging_manager = None
+                
+                # Restart the CAN reader without logging
+                if self.can_reader.is_alive():
+                    self.can_reader.stop()
+                    self.can_reader.join(timeout=2.0)
+                
+                # Start a new CAN reader without logging
+                self.can_reader = CanReaderThread(
+                    self.sensor_buffer, 
+                    status_callback=self.update_status_bar
+                )
+                self.can_reader.start()
+                
                 self.is_logging = False
                 return True # Logging stopped (discarded)
             else:
@@ -856,8 +931,10 @@ class SensorMonitorApp:
             self._prompt_and_save_log() # This will update is_logging
         else:
             print("Log discarded as acquisition stopped.")
-            if self.current_log_folder: # If there was an active log folder being written to
-                 self._stop_logging_action(self.current_log_folder) # Perform cleanup if any
+            if self.logging_manager:
+                self.logging_manager.stop_logging()
+                self.logging_manager.cleanup()
+                self.logging_manager = None
             self.is_logging = False
         # _update_logging_controls() will be called by toggle_acquisition
 
@@ -870,7 +947,6 @@ class SensorMonitorApp:
         if not self.is_logging: # Start logging
             # For starting, we need a temporary folder or decide how to handle this.
             # Let's create a temporary unique name for now, actual saving happens on stop.
-            # Or, better, defer folder creation until stop_logging or prompt_and_save_log
             # For now, _start_logging_action is a placeholder.
             # We can pass a conceptual "session_id" or similar if needed later.
             # For this iteration, let's assume _start_logging_action prepares for logging.
@@ -903,9 +979,10 @@ class SensorMonitorApp:
                     return # Do not close
             else: # Discard log
                 print("Log discarded on application close.")
-                if self.current_log_folder:
-                    self._stop_logging_action(self.current_log_folder) # Cleanup
-                self.is_logging = False
+                if self.logging_manager:
+                    self.logging_manager.stop_logging()
+                    self.logging_manager.cleanup()
+                    self.logging_manager = None
 
         print("Closing application...")
         # Stop the plot tab updates first (if it has its own thread/timers)
