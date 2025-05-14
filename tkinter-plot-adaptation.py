@@ -447,7 +447,7 @@ class SensorPlotTab:
             self.voltage_ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M:%S"))
             self.voltage_ax.tick_params(labelbottom=False)
         else:  # Reset limits if no data
-            self.voltage_ax.set_xlim(datetime.now(), datetime.now())  # Default empty view
+            self.voltage_ax.set_xlim(datetime.now(), datetime.now())  # type: ignore[arg-type]
             self.voltage_ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M:%S"))
             self.voltage_ax.tick_params(labelbottom=False)
 
@@ -462,7 +462,7 @@ class SensorPlotTab:
             self.temp_ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M:%S"))
             self.fig.autofmt_xdate(rotation=45)
         else:  # Reset limits if no data
-            self.temp_ax.set_xlim(datetime.now(), datetime.now())  # Default empty view
+            self.temp_ax.set_xlim(datetime.now(), datetime.now())  # type: ignore[arg-type]
             self.temp_ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M:%S"))
             self.fig.autofmt_xdate(rotation=45)
 
