@@ -149,24 +149,39 @@ class CanReaderThread(threading.Thread):
     def parse_signal_name(self, signal_name: str) -> Optional[Tuple[str, int, int]]:
         """
         Parses signal names like 'UCellBattPwrHi_1_1' or 'TCellBattEgyHi_12_6'.
-        Returns (data_type_str, module_idx, cell_idx) or None.
-        'data_type_str' will be "voltage" or "temperature".
+        - Only keeps module 1 from Pwr messages (maps to module 5/index 4)
+        - Ignores all other Pwr messages
+        - Ignores module 5 from Egy messages to prevent overwriting Pwr values
         """
-        match = re.match(r"(U|T)CellBattEgyHi_(\d+)_(\d+)", signal_name)
+        match = re.match(r"(U|T)CellBatt(Pwr|Egy)Hi_(\d+)_(\d+)", signal_name)
         if match:
-            data_type_char, module_str, cell_str = match.groups()
+            data_type_char, pwr_egy, module_str, cell_str = match.groups()
             data_type_map: Dict[str, str] = {"U": "voltage", "T": "temperature"}
             data_type: Optional[str] = data_type_map.get(data_type_char)
-
+            
             if data_type:
                 try:
-                    module_idx: int = int(module_str) - 1
-                    cell_idx: int = int(cell_str) - 1
+                    # Handle Pwr messages - only keep module 1
+                    if pwr_egy == "Pwr":
+                        if module_str == "1":
+                            module_idx = 4  # Map to 5th module (index 4)
+                        else:
+                            return None  # Discard all other Pwr modules
+                    # Handle Egy messages
+                    elif pwr_egy == "Egy":
+                        if module_str == "5":
+                            return None  # Skip module 5 of Egy messages
+                        else:
+                            module_idx = int(module_str) - 1
+                    else:
+                        return None  # Should not happen with the regex pattern
+                        
+                    cell_idx = int(cell_str) - 1
                     return data_type, module_idx, cell_idx
                 except ValueError:
-                    # This should ideally not happen due to \d+ in regex
                     print(f"Warning: Could not parse module/cell from signal: {signal_name}")
                     return None
+    
         return None
 
     def run(self) -> None:
