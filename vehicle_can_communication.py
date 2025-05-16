@@ -2,7 +2,7 @@ from datetime import datetime
 import os
 import threading
 import time
-from typing import Any, Callable, Dict, Optional, Tuple, Union
+from typing import Any, Callable, Dict, Optional, Tuple, Union, TypedDict
 
 import can
 import cantools
@@ -28,6 +28,26 @@ SEND_MESSAGE_ID = 0x25
 RECEIVE_MESSAGE_ID = 0x19
 RECEIVE_MESSAGE_MSG_NAME = "Battery_Info"
 SEND_PERIOD_S = 1  # Send every 1s
+
+# Define TypedDict for parsed battery failure bits
+class BatteryFailureBits(TypedDict):
+    permission: bool
+    com_csc_0_1_4: bool
+    csc_clr: bool
+    csc_255: bool
+    pwr_hi_bit_3: bool
+    pwr_hi_bit_4: bool
+    egy_hi_bit_3: bool
+    egy_hi_bit_4: bool
+    pwr_hi_bit_7: bool
+    egy_hi_bit_7: bool
+    raw_value: int  # Store the original raw value
+
+# Define a TypedDict for battery information
+class BatteryInfoData(TypedDict):
+    battery_state: Any  # Type can be more specific based on your DBC file
+    battery_failure: BatteryFailureBits  # Now using the structured bitmask data
+    timestamp: str
 
 class SharedValue:
     def __init__(self, initial_value: bool):
@@ -65,6 +85,22 @@ class MySignalListener(can.Listener):
         """Set or clear the logging observer."""
         self.logging_observer = observer
 
+    def _parse_battery_failure_bits(self, failure_value: int) -> BatteryFailureBits:
+        """Parse the battery failure bitmask into individual bits."""
+        return {
+            "permission": bool(failure_value & (1 << 0)),
+            "com_csc_0_1_4": bool(failure_value & (1 << 3)),
+            "csc_clr": bool(failure_value & (1 << 4)),
+            "csc_255": bool(failure_value & (1 << 5)),
+            "pwr_hi_bit_3": bool(failure_value & (1 << 7)),
+            "pwr_hi_bit_4": bool(failure_value & (1 << 8)),
+            "egy_hi_bit_3": bool(failure_value & (1 << 9)),
+            "egy_hi_bit_4": bool(failure_value & (1 << 10)),
+            "pwr_hi_bit_7": bool(failure_value & (1 << 11)),
+            "egy_hi_bit_7": bool(failure_value & (1 << 12)),
+            "raw_value": failure_value  # Store the original value as well
+        }
+
     def on_message_received(self, msg: can.Message) -> None:
         """Called when a message is received on the bus."""
         # Log the received message if we have a logging observer
@@ -87,11 +123,18 @@ class MySignalListener(can.Listener):
             dt_object = datetime.fromtimestamp(msg.timestamp)
             formatted_timestamp = dt_object.strftime("%H:%M:%S") # Format to HH:MM:SS
 
-            self._update_response(
-                f"Battery_State: {decoded_signals['Battery_State']}. "
-                f"Battery_Failure: {decoded_signals['Battery_Failure']}. "
-                f"Timestamp: {formatted_timestamp}"
-            )
+            # Parse the battery failure bitmask
+            battery_failure_raw = int(decoded_signals['Battery_Failure'])
+            battery_failure_bits = self._parse_battery_failure_bits(battery_failure_raw)
+
+            # Create typed dict with the decoded data
+            battery_info: BatteryInfoData = {
+                "battery_state": decoded_signals['Battery_State'],
+                "battery_failure": battery_failure_bits,
+                "timestamp": formatted_timestamp
+            }
+
+            self._update_response(battery_info)
 
         except cantools.database.errors.DecodeError as e:
             print(f"Listener: DBC DecodeError for ID {hex(msg.arbitration_id)} ('{self._message_definition.name}'): {e}")
@@ -102,14 +145,29 @@ class MySignalListener(can.Listener):
         """Called when an error occurs in the Notifier's processing of this Listener."""
         print(f"Listener: An error occurred: {exc}")
         
-    def _update_response(self, message: str) -> None:
+    def _update_response(self, message: BatteryInfoData) -> None:
         """Safely updates the response via callback."""
-        print(f"CAN Response: {message}")
+        # Format active failure bits as a comma-separated list
+        active_failures = []
+        failure_bits = message['battery_failure']
+        
+        # Check each failure bit and add to the active list if set
+        for bit_name, is_set in failure_bits.items():
+            if bit_name != 'raw_value' and is_set:
+                active_failures.append(bit_name)
+        
+        # Format the failure message
+        if active_failures:
+            failure_str = f"Battery_Failure: {failure_bits['raw_value']} (Active: {', '.join(active_failures)})"
+        else:
+            failure_str = f"Battery_Failure: {failure_bits['raw_value']} (No active failures)"
+            
+        # Format the complete message
+        message_str = f"Battery_State: {message['battery_state']}. {failure_str}. Timestamp: {message['timestamp']}"
+        print(f"CAN Response: {message_str}")
+        
         if self.response_callback:
-            # If response_callback needs to interact with Tkinter GUI from this thread,
-            # it should use root.after() or a thread-safe queue.
-            # For simplicity, we assume the callback itself handles thread safety if needed.
-            self.response_callback(message)
+            self.response_callback(message_str)
 
 class VehicleCanCommsThread(threading.Thread):
     """Reads CAN messages, decodes them, and updates the sensor buffer."""
