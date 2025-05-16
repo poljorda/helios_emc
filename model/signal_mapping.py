@@ -1,1 +1,0 @@
-# DBC signal to data structure mapping

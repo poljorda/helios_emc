@@ -1,1 +1,0 @@
-# Data logging functionality
