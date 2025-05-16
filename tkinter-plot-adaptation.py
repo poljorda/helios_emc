@@ -310,7 +310,7 @@ class SensorPlotTab:
     running: bool
     update_thread: threading.Thread
 
-    def __init__(self, notebook: ttk.Notebook, sensor_buffer: ModularSensorBuffer, module_id: int = 1) -> None:
+    def __init__(self, notebook: ttk.Notebook, sensor_buffer: ModularSensorBuffer, module_id: int = 0) -> None:
         self.sensor_buffer = sensor_buffer
         self.module_id = module_id
         self.notebook = notebook  # Store reference to notebook for active tab checking
@@ -452,7 +452,7 @@ class SensorPlotTab:
 
     def update_plots(self) -> None:
         """Update the plots with the latest data"""
-        module_id: int = int(self.module_var.get())
+        module_id: int = int(self.module_var.get()) - 1
 
         # Update voltage plot
         for cell_id in range(16):
@@ -603,7 +603,7 @@ class SensorPlotTab:
             while True:
                 self.update_queue.get_nowait()
                 # Only update plots if this tab is currently active and the module matches
-                if self.is_tab_active() and int(self.module_var.get()) == self.module_id:
+                if self.is_tab_active() and (int(self.module_var.get()) - 1) == self.module_id:
                     self.update_plots()
                 self.update_queue.task_done()
         except queue.Empty:
