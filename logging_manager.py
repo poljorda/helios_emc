@@ -75,12 +75,16 @@ class LoggingManager:
             
             # Create module folders for voltage
             for module_id in range(self.num_voltage_modules):
-                module_dir = os.path.join(voltage_dir, f"Module_{module_id:02d}")
+                # Use 1-based module ID for display
+                display_module_id = module_id + 1
+                module_dir = os.path.join(voltage_dir, f"Module_{display_module_id:02d}")
                 os.makedirs(module_dir, exist_ok=True)
                 
                 # Create CSV file for each cell in this module
                 for cell_id in range(self.num_voltage_cells):
-                    file_path = os.path.join(module_dir, f"voltage_{module_id:02d}_{cell_id:02d}.csv")
+                    # Use 1-based cell ID for display
+                    display_cell_id = cell_id + 1
+                    file_path = os.path.join(module_dir, f"voltage_{display_module_id:02d}_{display_cell_id:02d}.csv")
                     file_obj = open(file_path, 'w', newline='')
                     csv_writer = csv.writer(file_obj)
                     csv_writer.writerow(["timestamp", "value"])  # Write header
@@ -88,12 +92,16 @@ class LoggingManager:
             
             # Create module folders for temperature
             for module_id in range(self.num_temp_modules):
-                module_dir = os.path.join(temp_dir, f"Module_{module_id:02d}")
+                # Use 1-based module ID for display
+                display_module_id = module_id + 1
+                module_dir = os.path.join(temp_dir, f"Module_{display_module_id:02d}")
                 os.makedirs(module_dir, exist_ok=True)
                 
                 # Create CSV file for each cell in this module
                 for cell_id in range(self.num_temp_cells):
-                    file_path = os.path.join(module_dir, f"temperature_{module_id:02d}_{cell_id:02d}.csv")
+                    # Use 1-based cell ID for display
+                    display_cell_id = cell_id + 1
+                    file_path = os.path.join(module_dir, f"temperature_{display_module_id:02d}_{display_cell_id:02d}.csv")
                     file_obj = open(file_path, 'w', newline='')
                     csv_writer = csv.writer(file_obj)
                     csv_writer.writerow(["timestamp", "value"])  # Write header
