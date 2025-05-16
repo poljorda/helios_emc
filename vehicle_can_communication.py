@@ -14,7 +14,7 @@ from logging_manager import LoggingVehicleCanMessageObserver
 DBC_FILE_PATH = r"resources\Vehicle_CAN_V2.1.dbc"  # Make sure this path is correct
 KVASER_INTERFACE = "kvaser"
 # Use channel 0 for virtual simulation, maybe 1 for real hardware? Make configurable?
-KVASER_CHANNEL = 2
+KVASER_CHANNEL = 0
 IS_VIRTUAL = False  # Set True for testing with simulator
 
 # CAN 2.0 bit timing
@@ -53,6 +53,7 @@ class MySignalListener(can.Listener):
         self.db = db
         self.shared_value_store = shared_value_store
         self.response_callback = response_callback
+        self.logging_observer: Optional[LoggingVehicleCanMessageObserver] = None  # Add logging observer
         try:
             self._message_definition = self.db.get_message_by_name(RECEIVE_MESSAGE_MSG_NAME)
             print(f"Listener initialized for message '{RECEIVE_MESSAGE_MSG_NAME}' (ID: {hex(self._message_definition.frame_id)}).")
@@ -60,8 +61,16 @@ class MySignalListener(can.Listener):
             self._message_definition = None
             print(f"Listener WARNING: Message name '{RECEIVE_MESSAGE_MSG_NAME}' not found in DBC. Listener will not decode this message.")
 
+    def set_logging_observer(self, observer: Optional[LoggingVehicleCanMessageObserver]) -> None:
+        """Set or clear the logging observer."""
+        self.logging_observer = observer
+
     def on_message_received(self, msg: can.Message) -> None:
         """Called when a message is received on the bus."""
+        # Log the received message if we have a logging observer
+        if self.logging_observer:
+            self.logging_observer.log_message(msg)
+            
         if self._message_definition is None or msg.arbitration_id != self._message_definition.frame_id:
             # Not the message we are configured to decode, or DBC message definition was not found initially
             return
@@ -126,6 +135,11 @@ class VehicleCanCommsThread(threading.Thread):
     def set_logging_observer(self, observer: Union[LoggingVehicleCanMessageObserver | None]) -> None:
         """Set or clear the logging observer."""
         self.logging_observer = observer
+        # Also set the logging observer for the signal listener if it exists
+        if hasattr(self, 'notifier') and self.notifier is not None:
+            for listener in self.notifier.listeners:
+                if isinstance(listener, MySignalListener):
+                    listener.set_logging_observer(observer)
 
     def _update_status(self, message: str, is_error: bool = False) -> None:
         """Safely updates the status bar via callback."""
@@ -174,6 +188,9 @@ class VehicleCanCommsThread(threading.Thread):
             )
             
             signal_listener = MySignalListener(self.db, self.vehicle_status, self.response_callback)
+            # Pass the logging observer to the listener if we have one
+            if self.logging_observer:
+                signal_listener.set_logging_observer(self.logging_observer)
             self.notifier = can.Notifier(self.bus, [signal_listener])
             
             self._update_status(
