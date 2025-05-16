@@ -40,6 +40,7 @@ class LoggingManager:
         self.voltage_queue: queue.Queue[Tuple[int, int, float, float]] = queue.Queue()
         self.temp_queue: queue.Queue[Tuple[int, int, float, float]] = queue.Queue()
         self.can_message_queue: queue.Queue[can.Message] = queue.Queue()
+        self.vehicle_can_message_queue: queue.Queue[can.Message] = queue.Queue()  # New queue for vehicle CAN
         
         # Structures to hold file handles for CSV files
         self.voltage_files: Dict[Tuple[int, int], Tuple[Any, Any]] = {}  # (module_id, cell_id) -> (file_obj, csv_writer)
@@ -48,6 +49,10 @@ class LoggingManager:
         # BLF writer for raw CAN data
         self.blf_writer: Optional[BLFWriter] = None
         self.blf_path: Optional[str] = None
+        
+        # BLF writer for raw vehicle CAN data
+        self.vehicle_blf_writer: Optional[BLFWriter] = None
+        self.vehicle_blf_path: Optional[str] = None
         
         # Thread for processing queued data and writing to files
         self.logging_thread: Optional[threading.Thread] = None
@@ -95,8 +100,12 @@ class LoggingManager:
                     self.temp_files[(module_id, cell_id)] = (file_obj, csv_writer)
             
             # Create the BLF file for raw CAN data
-            self.blf_path = os.path.join(self.temp_dir, "raw_can.blf")
+            self.blf_path = os.path.join(self.temp_dir, "iot_can_raw.blf")
             self.blf_writer = BLFWriter(self.blf_path)
+            
+            # Create the BLF file for raw vehicle CAN data
+            self.vehicle_blf_path = os.path.join(self.temp_dir, "vehicle_can_raw.blf")
+            self.vehicle_blf_writer = BLFWriter(self.vehicle_blf_path)
             
             self.structure_created = True
         
@@ -126,6 +135,12 @@ class LoggingManager:
             if self.blf_writer:
                 self.blf_writer.on_message_received(msg)
     
+    def _write_vehicle_can_message(self, msg: can.Message) -> None:
+        """Write a vehicle CAN message to the vehicle BLF file."""
+        with self.lock:
+            if self.vehicle_blf_writer:
+                self.vehicle_blf_writer.on_message_received(msg)
+    
     def _logging_thread_func(self) -> None:
         """Background thread to process queued data and write to files."""
         while self.running:
@@ -153,6 +168,15 @@ class LoggingManager:
                     msg = self.can_message_queue.get_nowait()
                     self._write_can_message(msg)
                     self.can_message_queue.task_done()
+            except queue.Empty:
+                pass
+                
+            # Process raw vehicle CAN messages
+            try:
+                while True:  # Process all available items
+                    msg = self.vehicle_can_message_queue.get_nowait()
+                    self._write_vehicle_can_message(msg)
+                    self.vehicle_can_message_queue.task_done()
             except queue.Empty:
                 pass
             
@@ -209,6 +233,11 @@ class LoggingManager:
                 if self.blf_writer:
                     self.blf_writer.stop()
                     self.blf_writer = None
+                
+                # Close the vehicle BLF writer
+                if self.vehicle_blf_writer:
+                    self.vehicle_blf_writer.stop()
+                    self.vehicle_blf_writer = None
             
             # Create a summary file
             self._create_summary_file()
@@ -277,6 +306,11 @@ class LoggingManager:
         if self.running:
             self.can_message_queue.put(msg)
     
+    def log_vehicle_can_message(self, msg: can.Message) -> None:
+        """Add a vehicle CAN message to the vehicle logging queue."""
+        if self.running:
+            self.vehicle_can_message_queue.put(msg)
+    
     def cleanup(self) -> None:
         """Clean up resources and temporary files."""
         # Stop logging if still running
@@ -304,3 +338,18 @@ class LoggingCanMessageObserver:
     def log_message(self, msg: can.Message) -> None:
         """Forward received messages to the logging manager."""
         self.logging_manager.log_can_message(msg)
+
+class LoggingVehicleCanMessageObserver:
+    """Observer that receives vehicle CAN messages and forwards them to a LoggingManager."""
+    
+    def __init__(self, logging_manager: LoggingManager):
+        """Initialize the observer.
+        
+        Args:
+            logging_manager: LoggingManager to forward messages to
+        """
+        self.logging_manager = logging_manager
+    
+    def log_message(self, msg: can.Message) -> None:
+        """Forward received messages to the logging manager."""
+        self.logging_manager.log_vehicle_can_message(msg)

@@ -30,7 +30,7 @@ from sensor_data_structure import ModularSensorBuffer
 from vehicle_can_communication import VehicleCanCommsThread, SharedValue
 
 # Import the logging manager
-from logging_manager import LoggingManager, LoggingCanMessageObserver
+from logging_manager import LoggingManager, LoggingCanMessageObserver, LoggingVehicleCanMessageObserver
 
 # --- Constants (Adapt from can_monitor_app.py and can_simulator.py) ---
 DBC_FILE_PATH = r"resources\IOT_CAN_v4.0.dbc"  # Make sure this path is correct
@@ -806,7 +806,7 @@ class SensorMonitorApp:
         self.root.focus_set()
 
     def _start_logging_action(self, folder_path: str) -> None:
-        """Start logging operations by creating the LoggingManager and attaching an observer to the CAN reader."""
+        """Start logging operations by creating the LoggingManager and attaching observers to the CAN readers."""
         
         # Create the logging manager
         self.logging_manager = LoggingManager(
@@ -821,9 +821,14 @@ class SensorMonitorApp:
             self.current_log_folder = folder_path
             print(f"Start logging action triggered. Logging to: {self.current_log_folder}")
             
-            # Create an observer and attach it to the CAN reader to log messages
-            observer = LoggingCanMessageObserver(self.logging_manager)
-            self.can_reader.set_logging_observer(observer)
+            # Create observers and attach them to the CAN readers to log messages
+            iot_observer = LoggingCanMessageObserver(self.logging_manager)
+            self.can_reader.set_logging_observer(iot_observer)
+            
+            # Create and attach the vehicle CAN observer if it exists
+            if hasattr(self.vehicle_can_comm, 'set_logging_observer'):
+                vehicle_observer = LoggingVehicleCanMessageObserver(self.logging_manager)
+                self.vehicle_can_comm.set_logging_observer(vehicle_observer)
             
             self.update_status_bar("Logging started", False)
         else:
@@ -835,8 +840,12 @@ class SensorMonitorApp:
     def _stop_logging_action(self, folder_path: str) -> None:
         """Stop logging operations."""
         if self.logging_manager:
-            # Remove the logging observer from the CAN reader
+            # Remove the logging observers from the CAN readers
             self.can_reader.set_logging_observer(None)
+            
+            # Remove the vehicle CAN observer if it exists
+            if hasattr(self.vehicle_can_comm, 'set_logging_observer'):
+                self.vehicle_can_comm.set_logging_observer(None)
             
             # Stop the logging manager and get the temp directory path
             temp_dir = self.logging_manager.stop_logging()
@@ -859,9 +868,7 @@ class SensorMonitorApp:
         self.current_log_folder = None
 
     def _prompt_and_save_log(self) -> bool:
-        """Prompts user for log folder path using a file dialog, saves log, and updates state.
-        Returns True if logging is stopped (saved or discarded), False if logging continues.
-        """
+        """Prompts user for log folder path using a file dialog, saves log, and updates state."""
         # Ensure LOGGING_BASE_PATH exists, create if not
         if not os.path.exists(LOGGING_BASE_PATH):
             try:
@@ -900,21 +907,15 @@ class SensorMonitorApp:
                                    parent=self.root):
                 print("Logging discarded by user (cancelled save dialog).")
                 if self.logging_manager:
-                    temp_dir = self.logging_manager.stop_logging()
+                    # Clean up the logging manager
+                    self.logging_manager.stop_logging()
                     self.logging_manager.cleanup()
                     self.logging_manager = None
                 
-                # Restart the CAN reader without logging
-                if self.can_reader.is_alive():
-                    self.can_reader.stop()
-                    self.can_reader.join(timeout=2.0)
-                
-                # Start a new CAN reader without logging
-                self.can_reader = CanReaderThread(
-                    self.sensor_buffer, 
-                    status_callback=self.update_status_bar
-                )
-                self.can_reader.start()
+                # Clear the observers from both CAN threads
+                self.can_reader.set_logging_observer(None)
+                if hasattr(self.vehicle_can_comm, 'set_logging_observer'):
+                    self.vehicle_can_comm.set_logging_observer(None)
                 
                 self.is_logging = False
                 return True # Logging stopped (discarded)

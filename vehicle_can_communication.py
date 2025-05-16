@@ -2,17 +2,19 @@ from datetime import datetime
 import os
 import threading
 import time
-from typing import Any, Callable, Dict, Optional, Tuple
+from typing import Any, Callable, Dict, Optional, Tuple, Union
 
 import can
 import cantools
 
 from cantools.database import Database as CantoolsDatabase # type: ignore[attr-defined]
 
+from logging_manager import LoggingVehicleCanMessageObserver
+
 DBC_FILE_PATH = r"resources\Vehicle_CAN_V2.1.dbc"  # Make sure this path is correct
 KVASER_INTERFACE = "kvaser"
 # Use channel 0 for virtual simulation, maybe 1 for real hardware? Make configurable?
-KVASER_CHANNEL = 0
+KVASER_CHANNEL = 2
 IS_VIRTUAL = False  # Set True for testing with simulator
 
 # CAN 2.0 bit timing
@@ -111,16 +113,19 @@ class VehicleCanCommsThread(threading.Thread):
         self.response_callback: Optional[Callable[[str], None]] = response_callback
         self.running: bool = False
         self.db: Optional[cantools.db.Database] = None  # type: ignore
-        self.bus: Optional[can.BusABC] = (
-            None  # More specific type like can.interfaces.kvaser.KvaserBus could be used if only kvaser
-        )
+        self.bus: Optional[can.BusABC] = None
         
         # Flag to activate or disable communications (Vehicle_Status signal value)
         self.vehicle_status: SharedValue = SharedValue(False)  # Default to False (disabled)
         
         self.vehicle_status_start_time: Optional[float] = None  # Start time for vehicle status timer
-        
+        self.logging_observer: Optional[LoggingVehicleCanMessageObserver] = None  # Add this attribute for logging
+
         self.daemon: bool = True
+
+    def set_logging_observer(self, observer: Union[LoggingVehicleCanMessageObserver | None]) -> None:
+        """Set or clear the logging observer."""
+        self.logging_observer = observer
 
     def _update_status(self, message: str, is_error: bool = False) -> None:
         """Safely updates the status bar via callback."""
@@ -222,6 +227,10 @@ class VehicleCanCommsThread(threading.Thread):
                     )
                     if self.bus:
                         self.bus.send(msg)
+                        
+                        # If we have a logging observer, log the sent message
+                        if self.logging_observer:
+                            self.logging_observer.log_message(msg)
                     
                 time.sleep(SEND_PERIOD_S)
             except Exception as e:
