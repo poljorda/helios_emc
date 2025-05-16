@@ -333,11 +333,11 @@ class SensorPlotTab:
 
         # Module selection dropdown
         ttk.Label(self.controls_frame, text="Module:").pack(side=tk.LEFT, padx=(0, 5))
-        self.module_var = tk.StringVar(value=str(module_id))
+        self.module_var = tk.StringVar(value=str(module_id + 1))
         self.module_selector = ttk.Combobox(
             self.controls_frame,
             textvariable=self.module_var,
-            values=[str(i) for i in range(5)],  # 5 modules (0-4)
+            values=[str(i + 1) for i in range(5)],  # 5 modules (0-4) but displayed as 1-5
             width=5,
             state="readonly",
         )
@@ -382,14 +382,14 @@ class SensorPlotTab:
 
         # Create voltage subplot
         self.voltage_ax = self.fig.add_subplot(2, 1, 1)
-        self.voltage_ax.set_title(f"Module {module_id} Cell Voltages")
+        self.voltage_ax.set_title(f"Module {module_id + 1} Cell Voltages")
         self.voltage_ax.set_ylabel("Voltage (V)")
         self.voltage_ax.set_ylim(-16, 16)  # Fixed Y axis for voltage
         self.voltage_ax.grid(True)
 
         # Create temperature subplot
         self.temp_ax = self.fig.add_subplot(2, 1, 2)
-        self.temp_ax.set_title(f"Module {module_id} Cell Temperatures")
+        self.temp_ax.set_title(f"Module {module_id + 1} Cell Temperatures")
         self.temp_ax.set_ylabel("Temperature (K)")
         self.temp_ax.set_ylim(0, 512)  # Fixed Y axis for temperature
         self.temp_ax.grid(True)
@@ -437,13 +437,13 @@ class SensorPlotTab:
         # Initialize empty lines for voltage
         voltage_colors = plt.cm.tab20(np.linspace(0, 1, 16))  # type: ignore[attr-defined]
         for cell_id in range(16):
-            (line,) = self.voltage_ax.plot([], [], label=f"Cell {cell_id}", color=voltage_colors[cell_id])
+            (line,) = self.voltage_ax.plot([], [], label=f"Cell {cell_id + 1}", color=voltage_colors[cell_id])
             self.voltage_lines.append(line)
 
         # Initialize empty lines for temperature
         temp_colors = plt.cm.tab10(np.linspace(0, 1, 6))  # type: ignore[attr-defined]
         for cell_id in range(6):
-            (line,) = self.temp_ax.plot([], [], label=f"Cell {cell_id}", color=temp_colors[cell_id])
+            (line,) = self.temp_ax.plot([], [], label=f"Cell {cell_id + 1}", color=temp_colors[cell_id])
             self.temp_lines.append(line)
 
         # Add legends
@@ -518,12 +518,12 @@ class SensorPlotTab:
 
     def on_module_change(self, event: Any) -> None:  # tk.Event can also be used if preferred
         """Handle module selection change"""
-        module_id: int = int(self.module_var.get())
+        module_id: int = int(self.module_var.get()) - 1  # Convert from 1-based to 0-based
         self.module_id = module_id
 
         # Update subplot titles
-        self.voltage_ax.set_title(f"Module {module_id} Cell Voltages")
-        self.temp_ax.set_title(f"Module {module_id} Cell Temperatures")
+        self.voltage_ax.set_title(f"Module {module_id + 1} Cell Voltages")
+        self.temp_ax.set_title(f"Module {module_id + 1} Cell Temperatures")
 
         # Update the plots
         self.update_plots()
